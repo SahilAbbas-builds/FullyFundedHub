@@ -1,0 +1,114 @@
+import { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
+import { base44 } from '@/api/base44Client';
+import { Briefcase, Inbox, Users, Heart, TrendingUp, Plus, ArrowRight } from 'lucide-react';
+
+export default function AdminDashboard() {
+  const [stats, setStats] = useState({ live: 0, pending: 0, users: 0, drafts: 0 });
+  const [topSaved, setTopSaved] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    Promise.all([
+      base44.entities.Opportunity.filter({ status: 'published' }).then((r) => r.length).catch(() => 0),
+      base44.entities.Submission.filter({ status: 'pending' }).then((r) => r.length).catch(() => 0),
+      base44.entities.User.list().then((r) => r.length).catch(() => 0),
+      base44.entities.Opportunity.filter({ status: 'draft' }).then((r) => r.length).catch(() => 0),
+      base44.entities.SavedOpportunity.list(500).then((saves) => {
+        const counts = {};
+        saves.forEach((s) => {
+          if (s.opportunity_id) counts[s.opportunity_id] = (counts[s.opportunity_id] || 0) + 1;
+        });
+        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
+        return Promise.all(sorted.map(([id, count]) =>
+          base44.entities.Opportunity.get(id).then((o) => ({ ...o, saveCount: count })).catch(() => null)
+        ));
+      }).then((results) => results.filter(Boolean)).catch(() => []),
+    ]).then(([live, pending, users, drafts, top]) => {
+      setStats({ live, pending, users, drafts });
+      setTopSaved(top);
+      setLoading(false);
+    });
+  }, []);
+
+  const cards = [
+    { label: 'Live Listings', value: stats.live, icon: Briefcase, color: 'text-emerald-400', bg: 'bg-accent/15' },
+    { label: 'Pending Submissions', value: stats.pending, icon: Inbox, color: 'text-amber-400', bg: 'bg-amber-500/15' },
+    { label: 'Draft Listings', value: stats.drafts, icon: TrendingUp, color: 'text-primary', bg: 'bg-primary/15' },
+    { label: 'Registered Users', value: stats.users, icon: Users, color: 'text-blue-400', bg: 'bg-blue-500/15' },
+  ];
+
+  return (
+    <div className="space-y-6">
+      <div>
+        <h2 className="font-heading text-2xl font-bold">Overview</h2>
+        <p className="text-sm text-muted-foreground">Platform statistics at a glance.</p>
+      </div>
+
+      {loading ? (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {[...Array(4)].map((_, i) => <div key={i} className="h-28 glass-card rounded-2xl animate-pulse" />)}
+        </div>
+      ) : (
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+          {cards.map((card, i) => (
+            <div key={i} className="glass-card rounded-2xl p-5">
+              <div className={`w-10 h-10 rounded-xl ${card.bg} flex items-center justify-center mb-3`}>
+                <card.icon className={`w-5 h-5 ${card.color}`} />
+              </div>
+              <div className="font-heading text-3xl font-bold">{card.value}</div>
+              <div className="text-xs text-muted-foreground mt-1">{card.label}</div>
+            </div>
+          ))}
+        </div>
+      )}
+
+      <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+        {/* Most saved */}
+        <div className="glass-card rounded-2xl p-6">
+          <div className="flex items-center gap-2 mb-4">
+            <Heart className="w-5 h-5 text-primary" />
+            <h3 className="font-heading text-lg font-bold">Most Saved Opportunities</h3>
+          </div>
+          {topSaved.length > 0 ? (
+            <div className="space-y-3">
+              {topSaved.map((opp, i) => (
+                <Link key={opp.id} to={`/admin/opportunities`} className="flex items-center gap-3 p-3 rounded-xl hover:bg-white/5 transition-colors">
+                  <span className="w-7 h-7 rounded-full bg-primary/15 text-primary text-xs font-bold flex items-center justify-center flex-shrink-0">{i + 1}</span>
+                  <div className="flex-1 min-w-0">
+                    <p className="text-sm font-medium truncate">{opp.title}</p>
+                    <p className="text-xs text-muted-foreground">{opp.organization} · {opp.country}</p>
+                  </div>
+                  <span className="flex items-center gap-1 text-sm font-semibold text-primary">
+                    <Heart className="w-3.5 h-3.5 fill-primary" /> {opp.saveCount}
+                  </span>
+                </Link>
+              ))}
+            </div>
+          ) : (
+            <p className="text-sm text-muted-foreground py-6 text-center">No saved opportunities yet.</p>
+          )}
+        </div>
+
+        {/* Quick actions */}
+        <div className="glass-card rounded-2xl p-6">
+          <h3 className="font-heading text-lg font-bold mb-4">Quick Actions</h3>
+          <div className="space-y-2">
+            <Link to="/admin/opportunities/new" className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group">
+              <span className="flex items-center gap-3 text-sm font-medium"><Plus className="w-4 h-4 text-primary" /> Add new opportunity</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </Link>
+            <Link to="/admin/submissions" className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group">
+              <span className="flex items-center gap-3 text-sm font-medium"><Inbox className="w-4 h-4 text-amber-400" /> Review submissions {stats.pending > 0 && <span className="px-1.5 py-0.5 rounded-full bg-amber-500/20 text-amber-400 text-xs">{stats.pending}</span>}</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </Link>
+            <Link to="/admin/blog" className="flex items-center justify-between p-3 rounded-xl hover:bg-white/5 transition-colors group">
+              <span className="flex items-center gap-3 text-sm font-medium"><TrendingUp className="w-4 h-4 text-accent" /> Write a blog post</span>
+              <ArrowRight className="w-4 h-4 text-muted-foreground group-hover:text-primary transition-colors" />
+            </Link>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+}

@@ -1,0 +1,31 @@
+{
+    "name": "BlogPost",
+    "type": "object",
+    "properties": {
+      "title": {
+        "type": "string"
+      },
+      "excerpt": {
+        "type": "string"
+      },
+      "content": {
+        "type": "string"
+      },
+      "cover_image_url": {
+        "type": "string"
+      },
+      "author": {
+        "type": "string"
+      },
+      "category": {
+        "type": "string"
+      },
+      "published": {
+        "type": "boolean",
+        "default": false
+      }
+    },
+    "required": [
+      "title"
+    ]
+  }
