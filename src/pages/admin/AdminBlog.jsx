@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { Plus, Pencil, Trash2, X, Loader2, Eye } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
@@ -12,16 +12,22 @@ export default function AdminBlog() {
 
   const load = () => {
     setLoading(true);
-    base44.entities.BlogPost.list('-created_date', 100)
-      .then((results) => { setPosts(results); setLoading(false); })
-      .catch(() => setLoading(false));
+    supabase
+      .from('blog_posts')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+      .then(({ data, error }) => {
+        if (!error) setPosts(data || []);
+        setLoading(false);
+      });
   };
 
   useEffect(() => { load(); }, []);
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this post permanently?')) return;
-    await base44.entities.BlogPost.delete(id);
+    await supabase.from('blog_posts').delete().eq('id', id);
     setPosts((prev) => prev.filter((p) => p.id !== id));
   };
 
@@ -65,7 +71,7 @@ export default function AdminBlog() {
                   <span className={`px-2 py-0.5 rounded-full ${post.published ? 'bg-emerald-500/15 text-emerald-400' : 'bg-amber-500/15 text-amber-400'}`}>
                     {post.published ? 'Published' : 'Draft'}
                   </span>
-                  <span>{new Date(post.created_date).toLocaleDateString()}</span>
+                  <span>{new Date(post.created_at).toLocaleDateString()}</span>
                 </div>
               </div>
               <div className="flex gap-1 flex-shrink-0">
@@ -90,12 +96,15 @@ function BlogEditor({ post, onClose, onSaved }) {
 
   const handleSave = async (publish = false) => {
     setSaving(true);
-    const payload = { ...form, published: publish };
+    const { id, created_at, updated_at, ...rest } = form;
+    const payload = { ...rest, published: publish };
     try {
       if (post?.id) {
-        await base44.entities.BlogPost.update(post.id, payload);
+        const { error } = await supabase.from('blog_posts').update(payload).eq('id', post.id);
+        if (error) throw error;
       } else {
-        await base44.entities.BlogPost.create(payload);
+        const { error } = await supabase.from('blog_posts').insert(payload);
+        if (error) throw error;
       }
       onSaved();
     } catch {

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { Loader2, Save, Send, Sparkles, ArrowLeft } from 'lucide-react';
 
 const emptyForm = {
@@ -17,17 +17,23 @@ export default function AdminOpportunityForm() {
   const [form, setForm] = useState(emptyForm);
   const [eligibilityText, setEligibilityText] = useState('');
   const [loading, setLoading] = useState(false);
-  const [aiLoading, setAiLoading] = useState(false);
   const [loaded, setLoaded] = useState(false);
 
   // Load existing if editing
   useEffect(() => {
     if (id) {
-      base44.entities.Opportunity.get(id).then((data) => {
-        setForm({ ...emptyForm, ...data });
-        setEligibilityText((data.eligibility_criteria || []).join('\n'));
-        setLoaded(true);
-      });
+      supabase
+        .from('opportunities')
+        .select('*')
+        .eq('id', id)
+        .single()
+        .then(({ data, error }) => {
+          if (!error && data) {
+            setForm({ ...emptyForm, ...data });
+            setEligibilityText((data.eligibility_criteria || []).join('\n'));
+          }
+          setLoaded(true);
+        });
     } else {
       setLoaded(true);
     }
@@ -35,52 +41,26 @@ export default function AdminOpportunityForm() {
 
   const update = (key, value) => setForm((prev) => ({ ...prev, [key]: value }));
 
-  const handleAiFormat = async () => {
-    if (!form.raw_notes.trim()) return;
-    setAiLoading(true);
-    try {
-      const result = await base44.integrations.Core.InvokeLLM({
-        prompt: `You are a formatting assistant. Below are raw, unstructured notes about a scholarship or internship opportunity. Your job is to reformat ONLY the text provided into a clean list of eligibility criteria bullet points.
-
-CRITICAL RULES:
-- Do NOT invent, add, or assume any new facts, requirements, or information.
-- Only reformat what is explicitly stated in the raw notes.
-- If the notes mention eligibility criteria, extract and clean them into bullet points.
-- If the notes don't mention eligibility, return an empty array.
-- Each bullet point should be concise and self-contained.
-- Return a JSON array of strings, each string being one eligibility criterion.
-
-Raw notes:
-${form.raw_notes}`,
-        response_json_schema: {
-          type: 'object',
-          properties: {
-            criteria: {
-              type: 'array',
-              items: { type: 'string' }
-            }
-          }
-        }
-      });
-      const criteria = result.criteria || [];
-      setEligibilityText(criteria.join('\n'));
-      update('eligibility_criteria', criteria);
-    } catch (err) {
-      alert('AI formatting failed. Please try again.');
-    } finally {
-      setAiLoading(false);
-    }
+  const handleAiFormat = () => {
+    // TODO: AI-assisted formatting was previously powered by Base44's LLM
+    // integration. Not yet reconnected post-migration — needs a backend
+    // (e.g. a Supabase Edge Function) to call an LLM API without exposing
+    // a key client-side. For now, enter eligibility criteria manually below.
+    alert('AI Format is temporarily unavailable — please enter eligibility criteria manually for now.');
   };
 
   const handleSave = async (publish = false) => {
     setLoading(true);
     const criteriaArray = eligibilityText.split('\n').map((s) => s.trim()).filter(Boolean);
-    const payload = { ...form, eligibility_criteria: criteriaArray, status: publish ? 'published' : 'draft' };
+    const { id: _id, created_at, updated_at, ...rest } = form;
+    const payload = { ...rest, eligibility_criteria: criteriaArray, status: publish ? 'published' : 'draft' };
     try {
       if (id) {
-        await base44.entities.Opportunity.update(id, payload);
+        const { error } = await supabase.from('opportunities').update(payload).eq('id', id);
+        if (error) throw error;
       } else {
-        await base44.entities.Opportunity.create(payload);
+        const { error } = await supabase.from('opportunities').insert(payload);
+        if (error) throw error;
       }
       navigate('/admin/opportunities');
     } catch (err) {
@@ -174,10 +154,11 @@ ${form.raw_notes}`,
             </div>
             <button
               onClick={handleAiFormat}
-              disabled={aiLoading || !form.raw_notes.trim()}
+              disabled={!form.raw_notes.trim()}
               className="flex items-center gap-2 px-4 py-2 bg-primary text-primary-foreground rounded-lg text-xs font-semibold hover:bg-primary/90 transition-all disabled:opacity-40 whitespace-nowrap"
+              title="AI formatting is temporarily unavailable post-migration"
             >
-              {aiLoading ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Sparkles className="w-3.5 h-3.5" />}
+              <Sparkles className="w-3.5 h-3.5" />
               AI Format
             </button>
           </div>
@@ -196,7 +177,7 @@ ${form.raw_notes}`,
             className="input-base resize-none"
             value={eligibilityText}
             onChange={(e) => setEligibilityText(e.target.value)}
-            placeholder="Each line becomes a bullet point. Use AI Format to auto-format from raw notes."
+            placeholder="Each line becomes a bullet point."
           />
         </FormField>
 

@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { getDaysUntil, getDeadlineStatus } from '@/components/CountdownBadge';
 import { Plus, Pencil, Trash2, Archive, Loader2 } from 'lucide-react';
 
@@ -11,24 +11,27 @@ export default function AdminOpportunities() {
 
   const load = () => {
     setLoading(true);
-    base44.entities.Opportunity.list('-created_date', 200)
-      .then((results) => {
-        setOpportunities(results);
+    supabase
+      .from('opportunities')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(200)
+      .then(({ data, error }) => {
+        if (!error) setOpportunities(data || []);
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      });
   };
 
   useEffect(() => { load(); }, []);
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this opportunity permanently?')) return;
-    await base44.entities.Opportunity.delete(id);
+    await supabase.from('opportunities').delete().eq('id', id);
     setOpportunities((prev) => prev.filter((o) => o.id !== id));
   };
 
   const handleMarkInactive = async (id) => {
-    await base44.entities.Opportunity.update(id, { status: 'inactive' });
+    await supabase.from('opportunities').update({ status: 'inactive' }).eq('id', id);
     setOpportunities((prev) => prev.map((o) => o.id === id ? { ...o, status: 'inactive' } : o));
   };
 
@@ -43,7 +46,9 @@ export default function AdminOpportunities() {
     }
     if (!confirm(`Mark ${expired.length} expired listing(s) as inactive?`)) return;
     setBulkLoading(true);
-    await base44.entities.Opportunity.bulkUpdate(expired.map((o) => ({ id: o.id, status: 'inactive' })));
+    await Promise.all(
+      expired.map((o) => supabase.from('opportunities').update({ status: 'inactive' }).eq('id', o.id))
+    );
     load();
     setBulkLoading(false);
   };

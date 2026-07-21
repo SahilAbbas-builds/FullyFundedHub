@@ -9,7 +9,7 @@ export default function Footer() {
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2.5 mb-4">
               <img
-                src="https://media.base44.com/images/public/6a5b6c687497da10c6f21279/4f7114ffa_wmremove-transformed.png"
+               src="/logo.jpg"
                 alt="FullyFundedHub logo"
                 className="w-9 h-9 rounded-lg object-cover object-left"
               />
@@ -21,7 +21,6 @@ export default function Footer() {
               Curated, fully funded scholarships and internships for students who want to study and work abroad. Real opportunities. Verified. No noise.
             </p>
           </div>
-
           <div>
             <h4 className="text-sm font-semibold mb-4 text-foreground">Explore</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
@@ -31,7 +30,6 @@ export default function Footer() {
               <li><Link to="/contact" className="hover:text-primary transition-colors">Contact</Link></li>
             </ul>
           </div>
-
           <div>
             <h4 className="text-sm font-semibold mb-4 text-foreground">Submit</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
@@ -40,7 +38,6 @@ export default function Footer() {
               <li><Link to="/faq" className="hover:text-primary transition-colors">FAQ</Link></li>
             </ul>
           </div>
-
           <div>
             <h4 className="text-sm font-semibold mb-4 text-foreground">Legal</h4>
             <ul className="space-y-3 text-sm text-muted-foreground">
@@ -51,7 +48,6 @@ export default function Footer() {
             </ul>
           </div>
         </div>
-
         <div className="mt-10 pt-8 border-t border-white/5 flex flex-col sm:flex-row justify-between items-center gap-4">
           <p className="text-xs text-muted-foreground">© {new Date().getFullYear()} FullyFundedHub. All rights reserved.</p>
           <p className="text-xs text-muted-foreground flex items-center gap-1.5">

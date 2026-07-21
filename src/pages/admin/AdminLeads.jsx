@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { Mail, Trash2, Inbox } from 'lucide-react';
 
 export default function AdminLeads() {
@@ -7,14 +7,20 @@ export default function AdminLeads() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.ContactLead.list('-created_date', 100)
-      .then((results) => { setLeads(results); setLoading(false); })
-      .catch(() => setLoading(false));
+    supabase
+      .from('contact_leads')
+      .select('*')
+      .order('created_at', { ascending: false })
+      .limit(100)
+      .then(({ data, error }) => {
+        if (!error) setLeads(data || []);
+        setLoading(false);
+      });
   }, []);
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this lead?')) return;
-    await base44.entities.ContactLead.delete(id);
+    await supabase.from('contact_leads').delete().eq('id', id);
     setLeads((prev) => prev.filter((l) => l.id !== id));
   };
 
@@ -24,7 +30,6 @@ export default function AdminLeads() {
         <h2 className="font-heading text-2xl font-bold">Contact Leads</h2>
         <p className="text-sm text-muted-foreground">{leads.length} total submissions</p>
       </div>
-
       {loading ? (
         <div className="h-64 glass-card rounded-2xl animate-pulse" />
       ) : leads.length === 0 ? (
@@ -44,7 +49,7 @@ export default function AdminLeads() {
                       <Mail className="w-3 h-3" /> {lead.email}
                     </a>
                     <span className="text-xs text-muted-foreground">
-                      {new Date(lead.created_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
+                      {new Date(lead.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric', hour: '2-digit', minute: '2-digit' })}
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground mt-2 leading-relaxed">{lead.message}</p>

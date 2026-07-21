@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { Briefcase, Inbox, Users, Heart, TrendingUp, Plus, ArrowRight } from 'lucide-react';
 
 export default function AdminDashboard() {
@@ -9,26 +9,41 @@ export default function AdminDashboard() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    Promise.all([
-      base44.entities.Opportunity.filter({ status: 'published' }).then((r) => r.length).catch(() => 0),
-      base44.entities.Submission.filter({ status: 'pending' }).then((r) => r.length).catch(() => 0),
-      base44.entities.User.list().then((r) => r.length).catch(() => 0),
-      base44.entities.Opportunity.filter({ status: 'draft' }).then((r) => r.length).catch(() => 0),
-      base44.entities.SavedOpportunity.list(500).then((saves) => {
-        const counts = {};
-        saves.forEach((s) => {
-          if (s.opportunity_id) counts[s.opportunity_id] = (counts[s.opportunity_id] || 0) + 1;
-        });
-        const sorted = Object.entries(counts).sort((a, b) => b[1] - a[1]).slice(0, 5);
-        return Promise.all(sorted.map(([id, count]) =>
-          base44.entities.Opportunity.get(id).then((o) => ({ ...o, saveCount: count })).catch(() => null)
-        ));
-      }).then((results) => results.filter(Boolean)).catch(() => []),
-    ]).then(([live, pending, users, drafts, top]) => {
-      setStats({ live, pending, users, drafts });
-      setTopSaved(top);
+    const loadStats = async () => {
+      const [liveRes, pendingRes, usersRes, draftsRes, savesRes] = await Promise.all([
+        supabase.from('opportunities').select('id', { count: 'exact', head: true }).eq('status', 'published'),
+        supabase.from('submissions').select('id', { count: 'exact', head: true }).eq('status', 'pending'),
+        supabase.from('profiles').select('id', { count: 'exact', head: true }),
+        supabase.from('opportunities').select('id', { count: 'exact', head: true }).eq('status', 'draft'),
+        supabase.from('saved_opportunities').select('opportunity_id, opportunities(*)').limit(500),
+      ]);
+
+      const saves = savesRes.data || [];
+      const counts = {};
+      const oppMap = {};
+      saves.forEach((s) => {
+        if (s.opportunity_id) {
+          counts[s.opportunity_id] = (counts[s.opportunity_id] || 0) + 1;
+          if (s.opportunities) oppMap[s.opportunity_id] = s.opportunities;
+        }
+      });
+      const topSavedList = Object.entries(counts)
+        .sort((a, b) => b[1] - a[1])
+        .slice(0, 5)
+        .map(([id, count]) => (oppMap[id] ? { ...oppMap[id], saveCount: count } : null))
+        .filter(Boolean);
+
+      setStats({
+        live: liveRes.count || 0,
+        pending: pendingRes.count || 0,
+        users: usersRes.count || 0,
+        drafts: draftsRes.count || 0,
+      });
+      setTopSaved(topSavedList);
       setLoading(false);
-    });
+    };
+
+    loadStats().catch(() => setLoading(false));
   }, []);
 
   const cards = [

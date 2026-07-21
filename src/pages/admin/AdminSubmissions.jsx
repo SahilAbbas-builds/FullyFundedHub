@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { Check, X, Mail, Globe, Calendar, Building2, Loader2 } from 'lucide-react';
 
 export default function AdminSubmissions() {
@@ -10,18 +10,22 @@ export default function AdminSubmissions() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    base44.entities.Submission.filter({ status: 'pending' }, '-created_date', 100)
-      .then((results) => {
-        setSubmissions(results);
+    supabase
+      .from('submissions')
+      .select('*')
+      .eq('status', 'pending')
+      .order('created_at', { ascending: false })
+      .limit(100)
+      .then(({ data, error }) => {
+        if (!error) setSubmissions(data || []);
         setLoading(false);
-      })
-      .catch(() => setLoading(false));
+      });
   }, []);
 
   const handleApprove = async (sub) => {
     setActionLoading(sub.id);
     // Create a draft opportunity from the submission
-    await base44.entities.Opportunity.create({
+    const { error: createError } = await supabase.from('opportunities').insert({
       title: sub.title,
       organization: sub.organization,
       country: sub.country,
@@ -36,14 +40,18 @@ export default function AdminSubmissions() {
       description: sub.description,
       status: 'draft',
     });
-    await base44.entities.Submission.update(sub.id, { status: 'approved' });
-    setSubmissions((prev) => prev.filter((s) => s.id !== sub.id));
+    if (!createError) {
+      await supabase.from('submissions').update({ status: 'approved' }).eq('id', sub.id);
+      setSubmissions((prev) => prev.filter((s) => s.id !== sub.id));
+    } else {
+      alert('Failed to approve submission.');
+    }
     setActionLoading(null);
   };
 
   const handleReject = async (sub) => {
     setActionLoading(sub.id);
-    await base44.entities.Submission.update(sub.id, { status: 'rejected' });
+    await supabase.from('submissions').update({ status: 'rejected' }).eq('id', sub.id);
     setSubmissions((prev) => prev.filter((s) => s.id !== sub.id));
     setActionLoading(null);
   };

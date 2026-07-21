@@ -1,14 +1,18 @@
-import { Link } from 'react-router-dom';
-import { GraduationCap, Heart, Globe2 } from 'lucide-react';
+import { Link, useLocation } from 'react-router-dom';
+import { useState } from 'react';
+import { motion } from 'framer-motion';
+import { Menu, X, LayoutDashboard, LogOut, Shield } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useAuth } from '@/lib/AuthContext';
-import { useState } from 'react';
-import { Menu, X, LayoutDashboard, LogOut, Shield, Search } from 'lucide-react';
 
 export default function Navbar() {
-  const { user, loading, refresh } = useCurrentUser();
+  const { user, loading } = useCurrentUser();
   const { logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
+
+  // Get current URL to determine active state
+  const location = useLocation();
+  const isActive = (path) => location.pathname.startsWith(path);
 
   const isAdmin = user?.role === 'admin';
 
@@ -18,11 +22,11 @@ export default function Navbar() {
     { label: 'About', to: '/about' },
     { label: 'Contact', to: '/contact' },
   ];
+
   const handleLogout = async () => {
     await logout();
     window.location.href = '/';
   };
- 
 
   return (
     <header className="sticky top-0 z-50 w-full glass-card border-b border-white/5">
@@ -30,7 +34,7 @@ export default function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
             <img
-              src="https://media.base44.com/images/public/6a5b6c687497da10c6f21279/4f7114ffa_wmremove-transformed.png"
+             src="/logo.jpg"
               alt="FullyFundedHub logo"
               className="w-9 h-9 rounded-lg object-cover object-left shadow-lg group-hover:scale-105 transition-transform"
             />
@@ -39,24 +43,38 @@ export default function Navbar() {
             </span>
           </Link>
 
-          <div className="hidden md:flex items-center gap-2 lg:gap-6 lg:ml-10">
-            {navLinks.map((link) => (
-              <Link
-                key={link.to}
-                to={link.to}
-                className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
-              >
-                {link.label}
-              </Link>
-            ))}
+          {/* Desktop Navigation */}
+          <div className="hidden md:flex items-center gap-2 lg:gap-4 lg:ml-10">
+            {navLinks.map((link) => {
+              const active = isActive(link.to);
+              return (
+                <Link
+                  key={link.to}
+                  to={link.to}
+                  className={`relative px-4 py-2 text-sm font-medium transition-colors duration-300 rounded-full ${
+                    active ? 'text-foreground' : 'text-muted-foreground hover:text-foreground'
+                  }`}
+                >
+                  {active && (
+                    <motion.span
+                      layoutId="navActivePill"
+                      className="absolute inset-0 bg-white/10 rounded-full shadow-[0_0_15px_rgba(255,255,255,0.03)] backdrop-blur-md"
+                      transition={{ type: 'spring', stiffness: 380, damping: 30 }}
+                    />
+                  )}
+                  <span className="relative z-10">{link.label}</span>
+                </Link>
+              );
+            })}
           </div>
 
+          {/* Desktop Auth/Admin Actions */}
           <div className="hidden md:flex items-center gap-2 flex-shrink-0">
             {loading ? null : user ? (
               <>
                 <Link
                   to="/dashboard"
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-lg hover:bg-white/5"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full hover:bg-white/5"
                 >
                   <LayoutDashboard className="w-4 h-4" />
                   Dashboard
@@ -64,7 +82,7 @@ export default function Navbar() {
                 {isAdmin && (
                   <Link
                     to="/admin"
-                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors rounded-lg hover:bg-primary/10"
+                    className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-primary hover:text-primary/80 transition-colors rounded-full hover:bg-primary/10"
                   >
                     <Shield className="w-4 h-4" />
                     Admin
@@ -72,7 +90,7 @@ export default function Navbar() {
                 )}
                 <button
                   onClick={handleLogout}
-                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-destructive transition-colors rounded-lg hover:bg-destructive/10"
+                  className="flex items-center gap-2 px-4 py-2 text-sm font-medium text-muted-foreground hover:text-destructive transition-colors rounded-full hover:bg-destructive/10"
                 >
                   <LogOut className="w-4 h-4" />
                   Logout
@@ -80,12 +98,12 @@ export default function Navbar() {
               </>
             ) : (
               <>
-                <Link to="/login" className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors">
+                <Link to="/login" className="px-4 py-2 text-sm font-medium text-muted-foreground hover:text-foreground transition-colors rounded-full">
                   Log in
                 </Link>
                 <Link
                   to="/register"
-                  className="px-5 py-2 text-sm font-semibold bg-primary text-primary-foreground rounded-lg hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5"
+                  className="px-5 py-2 text-sm font-semibold bg-primary text-primary-foreground rounded-full hover:bg-primary/90 transition-all shadow-lg shadow-primary/20 hover:shadow-primary/30 hover:-translate-y-0.5"
                 >
                   Sign up
                 </Link>
@@ -93,6 +111,7 @@ export default function Navbar() {
             )}
           </div>
 
+          {/* Mobile Menu Toggle */}
           <button
             className="md:hidden p-2 text-foreground"
             onClick={() => setMobileOpen(!mobileOpen)}
@@ -101,19 +120,27 @@ export default function Navbar() {
           </button>
         </div>
 
+        {/* Mobile Navigation Dropdown */}
         {mobileOpen && (
           <div className="md:hidden py-4 border-t border-white/5 animate-fade-in">
             <div className="flex flex-col gap-1">
-              {navLinks.map((link) => (
-                <Link
-                  key={link.to}
-                  to={link.to}
-                  onClick={() => setMobileOpen(false)}
-                  className="px-4 py-3 text-sm font-medium text-muted-foreground hover:text-foreground hover:bg-white/5 rounded-lg transition-colors"
-                >
-                  {link.label}
-                </Link>
-              ))}
+              {navLinks.map((link) => {
+                const active = isActive(link.to);
+                return (
+                  <Link
+                    key={link.to}
+                    to={link.to}
+                    onClick={() => setMobileOpen(false)}
+                    className={`px-4 py-3 text-sm font-medium rounded-lg transition-colors ${
+                      active
+                        ? 'bg-white/10 text-foreground'
+                        : 'text-muted-foreground hover:text-foreground hover:bg-white/5'
+                    }`}
+                  >
+                    {link.label}
+                  </Link>
+                );
+              })}
               <div className="h-px bg-white/5 my-2" />
               {loading ? null : user ? (
                 <>
