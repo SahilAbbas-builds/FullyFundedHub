@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import OpportunityCard from '@/components/OpportunityCard';
 import SEO from '@/components/SEO';
 import { Search, SlidersHorizontal, X, Inbox, Clock } from 'lucide-react';
@@ -25,12 +25,23 @@ export default function Opportunities() {
   const [showFilters, setShowFilters] = useState(false);
 
   useEffect(() => {
-    base44.entities.Opportunity.filter({ status: 'published' }, sortByDeadline ? 'deadline' : '-created_date', 200)
-      .then((results) => {
-        setOpportunities(results);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const loadOpportunities = async () => {
+      let query = supabase
+        .from('opportunities')
+        .select('*')
+        .eq('status', 'published')
+        .limit(200);
+
+      query = sortByDeadline
+        ? query.order('deadline', { ascending: true })
+        : query.order('created_at', { ascending: false });
+
+      const { data } = await query;
+      setOpportunities(data || []);
+      setLoading(false);
+    };
+
+    loadOpportunities().catch(() => setLoading(false));
   }, [sortByDeadline]);
 
   const countries = useMemo(() => {

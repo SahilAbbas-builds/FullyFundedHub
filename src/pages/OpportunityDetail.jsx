@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import CountdownBadge, { getDaysUntil, getDeadlineStatus } from '@/components/CountdownBadge';
 import SaveButton from '@/components/SaveButton';
@@ -19,17 +19,35 @@ export default function OpportunityDetail() {
 
   useEffect(() => {
     setLoading(true);
-    base44.entities.Opportunity.get(id)
-      .then((data) => {
-        setOpp(data);
+    const loadOpportunity = async () => {
+      const { data, error } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
         setLoading(false);
-        if (data?.field_of_study) {
-          base44.entities.Opportunity.filter({ status: 'published', field_of_study: data.field_of_study }, '-created_date', 4)
-            .then((results) => setRelated(results.filter((r) => r.id !== id).slice(0, 3)))
-            .catch(() => {});
-        }
-      })
-      .catch(() => setLoading(false));
+        return;
+      }
+
+      setOpp(data);
+      setLoading(false);
+
+      if (data.field_of_study) {
+        const { data: relatedResults } = await supabase
+          .from('opportunities')
+          .select('*')
+          .eq('status', 'published')
+          .eq('field_of_study', data.field_of_study)
+          .order('created_at', { ascending: false })
+          .limit(4);
+
+        setRelated((relatedResults || []).filter((r) => r.id !== id).slice(0, 3));
+      }
+    };
+
+    loadOpportunity().catch(() => setLoading(false));
   }, [id]);
 
   if (loading) {

@@ -1,68 +1,19 @@
-import { useState, useEffect, useCallback } from 'react';
-import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 
-let cachedUser = null;
-let listeners = [];
-
-function notify() {
-  listeners.forEach((fn) => fn(cachedUser));
-}
-
+/**
+ * Compatibility wrapper: preserves the original { user, loading, refresh }
+ * interface while delegating to the Supabase-backed AuthContext.
+ */
 export function useCurrentUser() {
-  const [user, setUser] = useState(cachedUser);
-  const [loading, setLoading] = useState(cachedUser === null);
+  const { user, isLoadingAuth, checkUserAuth } = useAuth();
 
-  useEffect(() => {
-    const listener = (u) => setUser(u);
-    listeners.push(listener);
-
-    if (cachedUser === null && !loading) {
-      setLoading(true);
-    }
-
-    if (cachedUser === null) {
-      base44.auth.isAuthenticated().then(async (authed) => {
-        if (authed) {
-          try {
-            cachedUser = await base44.auth.me();
-          } catch {
-            cachedUser = false;
-          }
-        } else {
-          cachedUser = false;
-        }
-        setLoading(false);
-        notify();
-      });
-    }
-
-    return () => {
-      listeners = listeners.filter((fn) => fn !== listener);
-    };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  const refresh = useCallback(async () => {
-    cachedUser = null;
-    setLoading(true);
-    const authed = await base44.auth.isAuthenticated();
-    if (authed) {
-      try {
-        cachedUser = await base44.auth.me();
-      } catch {
-        cachedUser = false;
-      }
-    } else {
-      cachedUser = false;
-    }
-    setLoading(false);
-    notify();
-  }, []);
-
-  return { user: user === false ? null : user, loading, refresh };
+  return {
+    user: user || null,
+    loading: isLoadingAuth,
+    refresh: checkUserAuth
+  };
 }
 
 export function clearCachedUser() {
-  cachedUser = null;
-  notify();
+  // No-op for compatibility — AuthContext handles state via onAuthStateChange.
 }

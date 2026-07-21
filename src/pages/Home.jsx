@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import HeroBackground from '@/components/HeroBackground';
 import OpportunityCard from '@/components/OpportunityCard';
 import SEO from '@/components/SEO';
@@ -17,17 +17,30 @@ export default function Home() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    base44.entities.Opportunity.filter({ status: 'published', is_featured: true }, '-created_date', 4)
-      .then(async (results) => {
-        if (results.length === 0) {
-          const fallback = await base44.entities.Opportunity.filter({ status: 'published' }, '-created_date', 4);
-          setFeatured(fallback);
-        } else {
-          setFeatured(results);
-        }
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const loadFeatured = async () => {
+      const { data: featuredResults } = await supabase
+        .from('opportunities')
+        .select('*')
+        .eq('status', 'published')
+        .eq('is_featured', true)
+        .order('created_at', { ascending: false })
+        .limit(4);
+
+      if (!featuredResults || featuredResults.length === 0) {
+        const { data: fallback } = await supabase
+          .from('opportunities')
+          .select('*')
+          .eq('status', 'published')
+          .order('created_at', { ascending: false })
+          .limit(4);
+        setFeatured(fallback || []);
+      } else {
+        setFeatured(featuredResults);
+      }
+      setLoading(false);
+    };
+
+    loadFeatured().catch(() => setLoading(false));
   }, []);
 
   const handleSearch = (e) => {
@@ -40,7 +53,10 @@ export default function Home() {
     setNewsletterLoading(true);
     setNewsletterError('');
     try {
-      await base44.entities.NewsletterSignup.create({ email: newsletterEmail });
+      const { error } = await supabase
+        .from('newsletter_signups')
+        .insert({ email: newsletterEmail });
+      if (error) throw error;
       setNewsletterSent(true);
       setNewsletterEmail('');
     } catch {

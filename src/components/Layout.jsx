@@ -2,7 +2,6 @@ import { Outlet } from 'react-router-dom';
 import Navbar from '@/components/Navbar';
 import Footer from '@/components/Footer';
 import ScrollToTop from '@/components/ScrollToTop';
-import ChatWidget from '@/components/ChatWidget';
 
 export default function Layout() {
   return (
@@ -13,7 +12,6 @@ export default function Layout() {
         <Outlet />
       </main>
       <Footer />
-      <ChatWidget />
     </div>
   );
 }

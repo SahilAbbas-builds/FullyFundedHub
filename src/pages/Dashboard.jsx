@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import OpportunityCard from '@/components/OpportunityCard';
 import { getDaysUntil } from '@/components/CountdownBadge';
@@ -17,22 +17,22 @@ export default function Dashboard() {
       setDataLoading(false);
       return;
     }
-    base44.entities.SavedOpportunity.filter({}, '-created_date', 100)
-      .then(async (savedRecords) => {
-        setSaved(savedRecords);
-        const oppIds = savedRecords.map((s) => s.opportunity_id).filter(Boolean);
-        if (oppIds.length === 0) {
-          setOpportunities([]);
-          setDataLoading(false);
-          return;
-        }
-        const oppResults = await Promise.all(
-          oppIds.map((id) => base44.entities.Opportunity.get(id).catch(() => null))
-        );
-        setOpportunities(oppResults.filter(Boolean));
-        setDataLoading(false);
-      })
-      .catch(() => setDataLoading(false));
+
+    const loadSaved = async () => {
+      const { data: savedRecords } = await supabase
+        .from('saved_opportunities')
+        .select('*, opportunities(*)')
+        .eq('user_id', user.id)
+        .order('created_at', { ascending: false })
+        .limit(100);
+
+      const records = savedRecords || [];
+      setSaved(records);
+      setOpportunities(records.map((r) => r.opportunities).filter(Boolean));
+      setDataLoading(false);
+    };
+
+    loadSaved().catch(() => setDataLoading(false));
   }, [user]);
 
   const sortedOpps = useMemo(() => {
@@ -46,7 +46,7 @@ export default function Dashboard() {
   const handleRemove = async (oppId) => {
     const savedRecord = saved.find((s) => s.opportunity_id === oppId);
     if (!savedRecord) return;
-    await base44.entities.SavedOpportunity.delete(savedRecord.id);
+    await supabase.from('saved_opportunities').delete().eq('id', savedRecord.id);
     setSaved((prev) => prev.filter((s) => s.id !== savedRecord.id));
     setOpportunities((prev) => prev.filter((o) => o.id !== oppId));
   };

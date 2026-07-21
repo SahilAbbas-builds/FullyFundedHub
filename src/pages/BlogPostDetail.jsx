@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import ReactMarkdown from 'react-markdown';
 import SEO from '@/components/SEO';
 import { Calendar, User, ArrowLeft, ArrowRight } from 'lucide-react';
@@ -13,17 +13,35 @@ export default function BlogPostDetail() {
 
   useEffect(() => {
     setLoading(true);
-    base44.entities.BlogPost.get(id)
-      .then((data) => {
-        setPost(data);
+    const loadPost = async () => {
+      const { data, error } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('id', id)
+        .single();
+
+      if (error || !data) {
         setLoading(false);
-        if (data?.category) {
-          base44.entities.BlogPost.filter({ published: true, category: data.category }, '-created_date', 4)
-            .then((results) => setRelated(results.filter((r) => r.id !== id).slice(0, 3)))
-            .catch(() => {});
-        }
-      })
-      .catch(() => setLoading(false));
+        return;
+      }
+
+      setPost(data);
+      setLoading(false);
+
+      if (data.category) {
+        const { data: relatedResults } = await supabase
+          .from('blog_posts')
+          .select('*')
+          .eq('published', true)
+          .eq('category', data.category)
+          .order('created_at', { ascending: false })
+          .limit(4);
+
+        setRelated((relatedResults || []).filter((r) => r.id !== id).slice(0, 3));
+      }
+    };
+
+    loadPost().catch(() => setLoading(false));
   }, [id]);
 
   if (loading) {
@@ -67,7 +85,7 @@ export default function BlogPostDetail() {
           {post.author && <span className="flex items-center gap-1.5"><User className="w-4 h-4" /> {post.author}</span>}
           <span className="flex items-center gap-1.5">
             <Calendar className="w-4 h-4" />
-            {new Date(post.created_date).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
+            {new Date(post.created_at).toLocaleDateString('en-US', { month: 'long', day: 'numeric', year: 'numeric' })}
           </span>
         </div>
 

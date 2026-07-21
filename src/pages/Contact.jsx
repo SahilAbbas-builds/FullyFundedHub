@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import SEO from '@/components/SEO';
 import { Mail, MessageSquare, Send, Lightbulb, CheckCircle2, Loader2 } from 'lucide-react';
 
@@ -42,7 +42,7 @@ function ContactForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await base44.entities.ContactLead.create(form);
+    await supabase.from('contact_leads').insert(form);
     setLoading(false);
     setSent(true);
     setForm({ name: '', email: '', message: '' });
@@ -84,7 +84,7 @@ function SubmitForm() {
   const handleSubmit = async (e) => {
     e.preventDefault();
     setLoading(true);
-    await base44.entities.Submission.create(form);
+    await supabase.from('submissions').insert(form);
     setLoading(false);
     setSent(true);
   };

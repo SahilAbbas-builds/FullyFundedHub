@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Heart } from 'lucide-react';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import { useNavigate } from 'react-router-dom';
 
@@ -16,34 +16,43 @@ export default function SaveButton({ opportunityId, className = '' }) {
       setChecking(false);
       return;
     }
-    base44.entities.SavedOpportunity.filter({ opportunity_id: opportunityId })
-      .then((results) => {
-        if (results.length > 0) {
-          setSaved(true);
-          setSavedId(results[0].id);
-        }
-        setChecking(false);
-      })
-      .catch(() => setChecking(false));
+
+    const checkSaved = async () => {
+      const { data } = await supabase
+        .from('saved_opportunities')
+        .select('id')
+        .eq('opportunity_id', opportunityId)
+        .eq('user_id', user.id);
+
+      if (data && data.length > 0) {
+        setSaved(true);
+        setSavedId(data[0].id);
+      }
+      setChecking(false);
+    };
+
+    checkSaved().catch(() => setChecking(false));
   }, [user, opportunityId]);
 
   const handleClick = async (e) => {
     e.preventDefault();
     e.stopPropagation();
-
     if (!user) {
       navigate('/login');
       return;
     }
-
     if (saved && savedId) {
-      await base44.entities.SavedOpportunity.delete(savedId);
+      await supabase.from('saved_opportunities').delete().eq('id', savedId);
       setSaved(false);
       setSavedId(null);
     } else {
-      const record = await base44.entities.SavedOpportunity.create({ opportunity_id: opportunityId });
+      const { data } = await supabase
+        .from('saved_opportunities')
+        .insert({ opportunity_id: opportunityId, user_id: user.id })
+        .select()
+        .single();
       setSaved(true);
-      setSavedId(record.id);
+      setSavedId(data?.id);
     }
   };
 

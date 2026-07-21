@@ -1,12 +1,13 @@
 import { Link } from 'react-router-dom';
 import { GraduationCap, Heart, Globe2 } from 'lucide-react';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
-import { base44 } from '@/api/base44Client';
+import { useAuth } from '@/lib/AuthContext';
 import { useState } from 'react';
 import { Menu, X, LayoutDashboard, LogOut, Shield, Search } from 'lucide-react';
 
 export default function Navbar() {
   const { user, loading, refresh } = useCurrentUser();
+  const { logout } = useAuth();
   const [mobileOpen, setMobileOpen] = useState(false);
 
   const isAdmin = user?.role === 'admin';
@@ -17,11 +18,11 @@ export default function Navbar() {
     { label: 'About', to: '/about' },
     { label: 'Contact', to: '/contact' },
   ];
-
   const handleLogout = async () => {
-    await base44.auth.logout();
+    await logout();
     window.location.href = '/';
   };
+ 
 
   return (
     <header className="sticky top-0 z-50 w-full glass-card border-b border-white/5">

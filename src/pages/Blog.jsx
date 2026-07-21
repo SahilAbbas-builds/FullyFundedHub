@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { base44 } from '@/api/base44Client';
+import { supabase } from '@/api/supabaseClient';
 import SEO from '@/components/SEO';
 import { Calendar, User, ArrowRight, Newspaper } from 'lucide-react';
 
@@ -9,12 +9,19 @@ export default function Blog() {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    base44.entities.BlogPost.filter({ published: true }, '-created_date', 50)
-      .then((results) => {
-        setPosts(results);
-        setLoading(false);
-      })
-      .catch(() => setLoading(false));
+    const loadPosts = async () => {
+      const { data } = await supabase
+        .from('blog_posts')
+        .select('*')
+        .eq('published', true)
+        .order('created_at', { ascending: false })
+        .limit(50);
+
+      setPosts(data || []);
+      setLoading(false);
+    };
+
+    loadPosts().catch(() => setLoading(false));
   }, []);
 
   return (
@@ -24,7 +31,6 @@ export default function Blog() {
         <h1 className="font-heading text-4xl font-bold">Study Abroad Blog</h1>
         <p className="text-muted-foreground mt-2">SOP writing tips, visa guidance, application timelines, and study-abroad advice.</p>
       </div>
-
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[...Array(6)].map((_, i) => <div key={i} className="h-80 rounded-2xl glass-card animate-pulse" />)}
@@ -60,7 +66,7 @@ export default function Blog() {
                   {post.author && <span className="flex items-center gap-1.5"><User className="w-3 h-3" /> {post.author}</span>}
                   <span className="flex items-center gap-1.5">
                     <Calendar className="w-3 h-3" />
-                    {new Date(post.created_date).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
+                    {new Date(post.created_at).toLocaleDateString('en-US', { month: 'short', day: 'numeric', year: 'numeric' })}
                   </span>
                 </div>
               </div>
