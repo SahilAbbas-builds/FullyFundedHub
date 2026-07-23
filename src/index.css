@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
+﻿@import url('https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;500;600;700;800;900&family=Inter:wght@300;400;500;600;700&display=swap');
 
 @tailwind base;
 @tailwind components;
@@ -6,32 +6,33 @@
 
 @layer base {
   :root {
-    --background: 224 47% 5%;
-    --foreground: 210 40% 96%;
-    --card: 222 44% 10%;
-    --card-foreground: 210 40% 96%;
-    --surface-1: 222 44% 8%;
-    --surface-2: 222 47% 7%;
-    --popover: 222 44% 8%;
-    --popover-foreground: 210 40% 96%;
-    --primary: 43 96% 56%;
-    --primary-foreground: 224 47% 5%;
-    --secondary: 222 30% 15%;
-    --secondary-foreground: 210 40% 96%;
-    --muted: 222 30% 13%;
-    --muted-foreground: 215 20% 60%;
-    --accent: 174 65% 41%;
-    --accent-foreground: 210 40% 96%;
+    --background: 226 45% 8%;
+    --foreground: 220 20% 96%;
+    --card: 226 37% 13%;
+    --card-foreground: 220 20% 96%;
+    --surface-1: 226 42% 10%;
+    --surface-2: 226 45% 7%;
+    --popover: 226 37% 12%;
+    --popover-foreground: 220 20% 96%;
+    --primary: 172 100% 38%;
+    --primary-foreground: 220 20% 98%;
+    --secondary: 226 30% 17%;
+    --secondary-foreground: 220 20% 96%;
+    --muted: 226 25% 14%;
+    --muted-foreground: 220 15% 62%;
+    --accent: 246 92% 67%;
+    --accent-foreground: 220 20% 98%;
+    --highlight: 187 100% 61%;
     --destructive: 0 72% 51%;
-    --destructive-foreground: 210 40% 96%;
-    --border: 222 25% 16%;
-    --input: 222 25% 16%;
-    --ring: 43 96% 56%;
-    --chart-1: 43 96% 56%;
-    --chart-2: 160 84% 39%;
-    --chart-3: 197 80% 50%;
-    --chart-4: 280 65% 60%;
-    --chart-5: 340 75% 55%;
+    --destructive-foreground: 220 20% 96%;
+    --border: 226 30% 19%;
+    --input: 226 30% 19%;
+    --ring: 172 100% 45%;
+    --chart-1: 172 100% 45%;
+    --chart-2: 246 92% 67%;
+    --chart-3: 187 100% 61%;
+    --chart-4: 330 80% 60%;
+    --chart-5: 38 92% 55%;
     --radius: 0.75rem;
     --font-heading: 'Playfair Display', Georgia, serif;
     --font-body: 'Inter', ui-sans-serif, system-ui, sans-serif;
@@ -53,14 +54,20 @@
     @apply font-heading;
   }
 }
-
+.input-premium {
+  @apply w-full px-4 py-3 rounded-xl bg-background/60 border border-white/10 outline-none text-sm transition-all duration-200;
+}
+.input-premium:focus {
+  @apply border-primary/50;
+  box-shadow: 0 0 0 4px hsl(var(--primary) / 0.15);
+}
 @layer components {
   .glass-card {
-    background: hsl(222 44% 12% / 0.7);
+    background: hsl(226 37% 15% / 0.7);
     backdrop-filter: blur(16px);
     -webkit-backdrop-filter: blur(16px);
-    border: 1px solid hsl(0 0% 100% / 0.08);
-    box-shadow: 0 6px 28px -12px hsl(224 47% 3% / 0.7);
+    border: 1px solid hsl(220 40% 90% / 0.08);
+    box-shadow: 0 6px 28px -12px hsl(226 45% 3% / 0.7);
   }
 
   .glass-card-hover {
@@ -69,19 +76,19 @@
 
   .glass-card-hover:hover {
     transform: translateY(-6px);
-    box-shadow: 0 24px 48px -12px hsl(224 47% 3% / 0.8), 0 0 0 1px hsl(43 96% 56% / 0.15);
-    border-color: hsl(0 0% 100% / 0.15);
+    box-shadow: 0 24px 48px -12px hsl(226 45% 3% / 0.8), 0 0 0 1px hsl(172 100% 45% / 0.2);
+    border-color: hsl(172 100% 45% / 0.25);
   }
 
   .gradient-text {
-    background: linear-gradient(135deg, hsl(43 96% 60%), hsl(160 84% 45%));
+    background: linear-gradient(120deg, hsl(172 100% 45%), hsl(187 100% 61%) 50%, hsl(246 92% 70%));
     -webkit-background-clip: text;
     background-clip: text;
     -webkit-text-fill-color: transparent;
   }
 
   .gold-glow {
-    box-shadow: 0 0 24px -4px hsl(43 96% 56% / 0.4);
+    box-shadow: 0 0 24px -4px hsl(172 100% 45% / 0.45);
   }
 
   .input-base {
@@ -89,7 +96,7 @@
     padding: 0.625rem 1rem;
     border-radius: 0.75rem;
     background: hsl(var(--background) / 0.6);
-    border: 1px solid hsl(0 0% 100% / 0.1);
+    border: 1px solid hsl(220 40% 90% / 0.1);
     outline: none;
     font-size: 0.875rem;
     color: hsl(var(--foreground));
@@ -97,7 +104,7 @@
   }
 
   .input-base:focus {
-    border-color: hsl(var(--primary) / 0.4);
+    border-color: hsl(var(--primary) / 0.5);
   }
 
   .input-base::placeholder {
@@ -110,41 +117,64 @@
   .scrollbar-hide { -ms-overflow-style: none; scrollbar-width: none; }
 }
 
-/* Footer legal link — warmer gold hover */
 .legal-link {
   color: hsl(var(--muted-foreground));
   transition: color 0.2s ease, text-shadow 0.2s ease;
 }
 .legal-link:hover {
-  color: hsl(45 100% 60%);
-  text-shadow: 0 0 12px hsl(43 96% 56% / 0.25);
+  color: hsl(172 100% 55%);
+  text-shadow: 0 0 12px hsl(172 100% 45% / 0.3);
 }
 
-/* Legal page prose styling */
 .prose-legal p {
   color: hsl(var(--muted-foreground));
-  font-size: 0.9375rem;
-  line-height: 1.75;
-  margin-top: 1rem;
+  font-size: 1rem;
+  line-height: 1.85;
+  margin-top: 1.25rem;
 }
 .prose-legal h2 {
   font-family: var(--font-heading);
-  font-size: 1.375rem;
+  font-size: 1.5rem;
   font-weight: 700;
   color: hsl(var(--foreground));
-  margin-top: 2.5rem;
+  margin-top: 3rem;
+  margin-bottom: 0.875rem;
+  padding-bottom: 0.75rem;
+  border-bottom: 1px solid hsl(var(--primary) / 0.15);
+}
+.prose-legal h2:first-child {
+  margin-top: 0;
+}
+.prose-legal h3 {
+  font-family: var(--font-heading);
+  font-size: 1.125rem;
+  font-weight: 600;
+  color: hsl(var(--foreground));
+  margin-top: 2rem;
   margin-bottom: 0.5rem;
 }
 .prose-legal ul {
-  margin-top: 1rem;
-  padding-left: 1.25rem;
-  list-style: disc;
+  margin-top: 1.25rem;
+  padding-left: 0.25rem;
+  list-style: none;
 }
 .prose-legal li {
   color: hsl(var(--muted-foreground));
-  font-size: 0.9375rem;
-  line-height: 1.75;
-  margin-bottom: 0.5rem;
+  font-size: 1rem;
+  line-height: 1.85;
+  margin-bottom: 0.875rem;
+  padding-left: 1.5rem;
+  position: relative;
+}
+.prose-legal li::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  top: 0.65em;
+  width: 6px;
+  height: 6px;
+  border-radius: 999px;
+  background: hsl(var(--primary));
 }
 .prose-legal strong {
   color: hsl(var(--foreground));
@@ -152,17 +182,21 @@
 }
 .prose-legal a {
   color: hsl(var(--primary));
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  transition: color 0.15s ease;
 }
-
-/* Quill editor dark theme overrides */
+.prose-legal a:hover {
+  color: hsl(var(--accent));
+}
 .ql-toolbar.ql-snow {
-  border: 1px solid hsl(0 0% 100% / 0.1) !important;
+  border: 1px solid hsl(220 40% 90% / 0.1) !important;
   border-bottom: none !important;
-  background: hsl(222 44% 11% / 0.4);
+  background: hsl(226 37% 12% / 0.4);
 }
 
 .ql-container.ql-snow {
-  border: 1px solid hsl(0 0% 100% / 0.1) !important;
+  border: 1px solid hsl(220 40% 90% / 0.1) !important;
   border-top: none !important;
   background: hsl(var(--background) / 0.6);
   min-height: 200px;
@@ -182,20 +216,20 @@
 }
 
 .ql-snow .ql-stroke {
-  stroke: hsl(215 20% 60%) !important;
+  stroke: hsl(220 15% 62%) !important;
 }
 
 .ql-snow .ql-fill {
-  fill: hsl(215 20% 60%) !important;
+  fill: hsl(220 15% 62%) !important;
 }
 
 .ql-snow .ql-picker-label {
-  color: hsl(215 20% 60%) !important;
+  color: hsl(220 15% 62%) !important;
 }
 
 .ql-snow .ql-picker-options {
   background: hsl(var(--popover)) !important;
-  border: 1px solid hsl(0 0% 100% / 0.1) !important;
+  border: 1px solid hsl(220 40% 90% / 0.1) !important;
   color: hsl(var(--foreground)) !important;
 }
 
@@ -221,3 +255,37 @@
 .ql-editor a {
   color: hsl(var(--primary));
 }
+
+@keyframes drift {
+  0%, 100% { transform: translate(0, 0); }
+  33% { transform: translate(30px, -20px); }
+  66% { transform: translate(-20px, 25px); }
+}
+.animate-drift {
+  animation: drift 22s ease-in-out infinite;
+}
+
+@keyframes bob {
+  0%, 100% { transform: translateY(0) rotate(-6deg); }
+  50% { transform: translateY(-14px) rotate(-4deg); }
+}
+.animate-bob {
+  animation: bob 6s ease-in-out infinite;
+}
+
+/* Phase 3: card spotlight glow */
+.card-spotlight {
+  position: absolute;
+  inset: -40% -40% auto auto;
+  width: 220px;
+  height: 220px;
+  background: radial-gradient(circle, hsl(172 100% 50% / 0.25), transparent 70%);
+  opacity: 0;
+  transition: opacity 0.4s ease;
+  pointer-events: none;
+  z-index: 0;
+}
+.glass-card-hover:hover .card-spotlight {
+  opacity: 1;
+}
+

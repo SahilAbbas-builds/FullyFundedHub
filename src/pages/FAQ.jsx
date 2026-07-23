@@ -1,4 +1,5 @@
-import { useState } from 'react';
+﻿import { useState } from 'react';
+import { motion } from 'framer-motion';
 import SEO from '@/components/SEO';
 import { Link } from 'react-router-dom';
 import { ChevronDown } from 'lucide-react';
@@ -28,20 +29,29 @@ const faqs = [
 
 export default function FAQ() {
   const [open, setOpen] = useState(0);
-
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
       <SEO title="FAQ — FullyFundedHub" description="Answers to common questions about FullyFundedHub: how we verify listings, how to submit opportunities, and more." />
-
-      <div className="text-center mb-12">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.5, ease: [0.22, 1, 0.36, 1] }}
+        className="text-center mb-12"
+      >
         <span className="text-xs font-medium text-muted-foreground uppercase tracking-wider">Support</span>
         <h1 className="font-heading text-4xl sm:text-5xl font-bold mt-3">Frequently Asked Questions</h1>
         <p className="text-muted-foreground mt-4 max-w-lg mx-auto">Everything you need to know about using FullyFundedHub to find verified scholarships and internships.</p>
-      </div>
-
+      </motion.div>
       <div className="space-y-3">
         {faqs.map((faq, i) => (
-          <div key={i} className="glass-card rounded-2xl overflow-hidden">
+          <motion.div
+            key={i}
+            initial={{ opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: '-40px' }}
+            transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1], delay: i * 0.05 }}
+            className="glass-card rounded-2xl overflow-hidden"
+          >
             <button
               onClick={() => setOpen(open === i ? -1 : i)}
               className="w-full flex items-center justify-between gap-4 p-5 text-left"
@@ -54,13 +64,12 @@ export default function FAQ() {
                 <p className="px-5 pb-5 text-sm text-muted-foreground leading-relaxed">{faq.a}</p>
               </div>
             </div>
-          </div>
+          </motion.div>
         ))}
       </div>
-
       <div className="text-center mt-12 glass-card rounded-2xl p-8">
         <p className="text-muted-foreground">Still have questions?</p>
-        <Link to="/contact" className="inline-block mt-3 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all gold-glow">
+        <Link to="/contact" className="inline-block mt-3 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25">
           Contact us
         </Link>
       </div>

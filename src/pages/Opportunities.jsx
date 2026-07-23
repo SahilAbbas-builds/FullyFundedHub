@@ -1,4 +1,4 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/api/supabaseClient';
 import OpportunityCard from '@/components/OpportunityCard';
@@ -128,10 +128,10 @@ export default function Opportunities() {
         </label>
       </div>
 
-      <div className="flex gap-6">
+      <div className="flex flex-col sm:flex-row gap-6">
         {/* Filters sidebar */}
         <aside className={`${showFilters ? 'block' : 'hidden'} sm:block w-full sm:w-64 flex-shrink-0`}>
-          <div className="glass-card rounded-2xl p-5 sticky top-20">
+          <div className="glass-card rounded-2xl p-5 sm:sticky sm:top-20">
             <div className="flex items-center justify-between mb-4">
               <h3 className="font-semibold text-sm">Filters</h3>
               {hasActiveFilters && (
@@ -174,7 +174,7 @@ export default function Opportunities() {
         </aside>
 
         {/* Results */}
-        <div className="flex-1">
+        <div className="flex-1 min-w-0">
           <p className="text-sm text-muted-foreground mb-4">{loading ? 'Loading…' : `${activeListings.length} opportunit${activeListings.length === 1 ? 'y' : 'ies'} found`}</p>
 
           {loading ? (

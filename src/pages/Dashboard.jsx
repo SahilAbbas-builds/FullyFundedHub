@@ -1,5 +1,6 @@
-import { useState, useEffect, useMemo } from 'react';
+﻿import { useState, useEffect, useMemo } from 'react';
 import { Link } from 'react-router-dom';
+import { motion } from 'framer-motion';
 import { supabase } from '@/api/supabaseClient';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import OpportunityCard from '@/components/OpportunityCard';
@@ -77,14 +78,24 @@ export default function Dashboard() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <div className="mb-8">
+      <motion.div
+        initial={{ opacity: 0, y: 16 }}
+        animate={{ opacity: 1, y: 0 }}
+        transition={{ duration: 0.4, ease: [0.22, 1, 0.36, 1] }}
+        className="mb-8"
+      >
         <h1 className="font-heading text-4xl font-bold">My Dashboard</h1>
         <p className="text-muted-foreground mt-2">Your saved opportunities, sorted by deadline urgency.</p>
-      </div>
+      </motion.div>
 
       {/* Upcoming deadlines alert */}
       {upcoming.length > 0 && (
-        <div className="glass-card rounded-2xl p-5 mb-8 border-l-4 border-l-amber-500">
+        <motion.div
+          initial={{ opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.4, delay: 0.1, ease: [0.22, 1, 0.36, 1] }}
+          className="glass-card rounded-2xl p-5 mb-8 border-l-4 border-l-amber-500"
+        >
           <div className="flex items-center gap-2 mb-3">
             <AlertTriangle className="w-5 h-5 text-amber-400" />
             <h3 className="font-semibold text-amber-400">Upcoming deadlines ({upcoming.length})</h3>
@@ -102,22 +113,28 @@ export default function Dashboard() {
               );
             })}
           </div>
-        </div>
+        </motion.div>
       )}
 
       {sortedOpps.length > 0 ? (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
-          {sortedOpps.map((opp) => (
-            <div key={opp.id} className="relative group">
+          {sortedOpps.map((opp, i) => (
+            <motion.div
+              key={opp.id}
+              initial={{ opacity: 0, y: 16 }}
+              animate={{ opacity: 1, y: 0 }}
+              transition={{ duration: 0.4, delay: Math.min(i * 0.05, 0.3), ease: [0.22, 1, 0.36, 1] }}
+              className="relative group"
+            >
               <OpportunityCard opportunity={opp} />
               <button
                 onClick={() => handleRemove(opp.id)}
-                className="absolute top-2 right-12 z-10 w-9 h-9 rounded-full bg-background/80 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-all opacity-0 group-hover:opacity-100"
+                className="absolute top-2 right-12 z-10 w-9 h-9 rounded-full bg-background/80 border border-white/10 flex items-center justify-center text-muted-foreground hover:text-destructive hover:border-destructive/30 transition-all opacity-100 sm:opacity-0 sm:group-hover:opacity-100"
                 aria-label="Remove from saved"
               >
                 <Trash2 className="w-4 h-4" />
               </button>
-            </div>
+            </motion.div>
           ))}
         </div>
       ) : (

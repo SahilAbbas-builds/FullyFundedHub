@@ -1,4 +1,4 @@
-import { Link } from 'react-router-dom';
+﻿import { Link } from 'react-router-dom';
 import SEO from '@/components/SEO';
 import { Home, Compass } from 'lucide-react';
 
@@ -18,7 +18,7 @@ export default function PageNotFound() {
           The page you're looking for doesn't exist or may have been moved. But there are plenty of verified opportunities waiting for you.
         </p>
         <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all gold-glow">
+          <Link to="/" className="inline-flex items-center justify-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25">
             <Home className="w-4 h-4" /> Back to home
           </Link>
           <Link to="/opportunities" className="inline-flex items-center justify-center gap-2 px-6 py-3 border border-accent/30 rounded-xl text-sm font-semibold text-accent hover:bg-accent/10 transition-all">

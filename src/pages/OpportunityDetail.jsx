@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/api/supabaseClient';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
@@ -90,7 +90,7 @@ export default function OpportunityDetail() {
               You need a free account to access application links. Log in or sign up — we'll bring you right back to this opportunity.
             </p>
             <div className="mt-6 space-y-3">
-              <Link to={`/login?next=${encodeURIComponent(redirectPath)}`} className="block w-full px-5 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold text-center hover:bg-primary/90 transition-all gold-glow">
+              <Link to={`/login?next=${encodeURIComponent(redirectPath)}`} className="block w-full px-5 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold text-center hover:bg-primary/90 transition-all shadow-lg shadow-primary/25">
                 Log in
               </Link>
               <Link to={`/register?next=${encodeURIComponent(redirectPath)}`} className="block w-full px-5 py-3 border border-white/15 rounded-xl text-sm font-semibold text-center hover:bg-white/5 transition-all">
@@ -216,7 +216,7 @@ export default function OpportunityDetail() {
 
           {/* Sidebar */}
           <div className="space-y-4">
-            <div className="glass-card rounded-2xl p-6 sticky top-20">
+            <div className="glass-card rounded-2xl p-6 lg:sticky lg:top-20">
               <div className="flex items-center justify-between mb-4">
                 <CountdownBadge deadline={opp.deadline} />
                 <SaveButton opportunityId={opp.id} />
@@ -231,7 +231,7 @@ export default function OpportunityDetail() {
                       setShowAuthPrompt(true);
                     }
                   }}
-                  className="flex items-center justify-center gap-2 w-full px-5 py-3.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all gold-glow"
+                  className="flex items-center justify-center gap-2 w-full px-5 py-3.5 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25"
                 >
                   Apply Now <ExternalLink className="w-4 h-4" />
                 </button>

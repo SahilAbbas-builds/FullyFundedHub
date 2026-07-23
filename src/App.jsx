@@ -1,4 +1,4 @@
-import { Suspense, lazy } from 'react';
+﻿import { Suspense, lazy } from 'react';
 import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
@@ -9,7 +9,7 @@ import ScrollToTop from './components/ScrollToTop';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
 
-// Lazy-loaded pages — each downloads only when its route is visited
+// Lazy-loaded pages â€” each downloads only when its route is visited
 const PageNotFound = lazy(() => import('@/pages/PageNotFound'));
 const Home = lazy(() => import('@/pages/Home'));
 const Opportunities = lazy(() => import('@/pages/Opportunities'));
@@ -65,13 +65,13 @@ const AuthenticatedApp = () => {
   return (
     <Suspense fallback={<PageLoader />}>
       <Routes>
-        {/* Auth routes — standalone, no layout */}
+        {/* Auth routes â€” standalone, no layout */}
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
 
-        {/* Admin panel — admin-only, own layout */}
+        {/* Admin panel â€” admin-only, own layout */}
         <Route path="/admin" element={<AdminLayout />}>
           <Route index element={<AdminDashboard />} />
           <Route path="opportunities" element={<AdminOpportunities />} />
@@ -82,7 +82,7 @@ const AuthenticatedApp = () => {
           <Route path="leads" element={<AdminLeads />} />
         </Route>
 
-        {/* Main site — public layout with navbar + footer */}
+        {/* Main site â€” public layout with navbar + footer */}
         <Route element={<Layout />}>
           <Route path="/" element={<Home />} />
           <Route path="/opportunities" element={<Opportunities />} />
@@ -97,13 +97,12 @@ const AuthenticatedApp = () => {
           <Route path="/cookie-policy" element={<CookiePolicy />} />
           <Route path="/faq" element={<FAQ />} />
 
-          {/* Protected — requires login */}
+          {/* Protected â€” requires login */}
           <Route element={<ProtectedRoute unauthenticatedElement={<Navigate to="/login" replace />} />}>
             <Route path="/dashboard" element={<Dashboard />} />
           </Route>
+          <Route path="*" element={<PageNotFound />} />
         </Route>
-
-        <Route path="*" element={<PageNotFound />} />
       </Routes>
     </Suspense>
   );
@@ -126,3 +125,4 @@ function App() {
 }
 
 export default App
+

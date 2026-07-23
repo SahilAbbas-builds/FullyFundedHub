@@ -1,5 +1,6 @@
-import React, { useState } from "react";
+﻿import React, { useState } from "react";
 import { Link } from "react-router-dom";
+import { motion } from "framer-motion";
 import { supabase } from "@/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -62,14 +63,20 @@ export default function Register() {
         title="Check your email"
         subtitle={`We sent a confirmation link to ${email}`}
       >
-        <p className="text-center text-sm text-muted-foreground leading-relaxed">
-          Click the link in the email to confirm your account. Once confirmed, you can log in and start saving opportunities.
-        </p>
-        <Link to="/login" className="mt-6 block w-full">
-          <Button className="w-full h-12 font-medium">
-            Go to log in
-          </Button>
-        </Link>
+        <motion.div
+          initial={{ opacity: 0, y: 8 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.3, delay: 0.15 }}
+        >
+          <p className="text-center text-sm text-muted-foreground leading-relaxed">
+            Click the link in the email to confirm your account. Once confirmed, you can log in and start saving opportunities.
+          </p>
+          <Link to="/login" className="mt-6 block w-full">
+            <Button className="w-full h-12 font-medium">
+              Go to log in
+            </Button>
+          </Link>
+        </motion.div>
       </AuthLayout>
       </>
     );
