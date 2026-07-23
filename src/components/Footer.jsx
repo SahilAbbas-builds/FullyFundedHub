@@ -139,6 +139,7 @@ export default function Footer() {
                 </div>
                 <button
                   type="submit"
+                  aria-label="Subscribe to newsletter"
                   className="shrink-0 inline-flex items-center gap-1.5 rounded-xl px-4 text-sm font-medium bg-primary text-primary-foreground hover:bg-primary/90 transition-colors"
                 >
                   {subscribed ? <Check className="w-4 h-4" /> : <ArrowRight className="w-4 h-4" />}
@@ -163,7 +164,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-1">
-            <h4 className="text-sm font-semibold mb-4 text-foreground">Explore</h4>
+            <h3 className="text-sm font-semibold mb-4 text-foreground">Explore</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/opportunities" className="hover:text-primary transition-colors">Opportunities</Link></li>
               <li><Link to="/blog" className="hover:text-primary transition-colors">Blog</Link></li>
@@ -173,7 +174,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-1">
-            <h4 className="text-sm font-semibold mb-4 text-foreground">Submit</h4>
+            <h3 className="text-sm font-semibold mb-4 text-foreground">Submit</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/contact" className="hover:text-primary transition-colors">Submit an opportunity</Link></li>
               <li><Link to="/register" className="hover:text-primary transition-colors">Create account</Link></li>
@@ -182,7 +183,7 @@ export default function Footer() {
           </div>
 
           <div className="md:col-span-1">
-            <h4 className="text-sm font-semibold mb-4 text-foreground">Legal</h4>
+            <h3 className="text-sm font-semibold mb-4 text-foreground">Legal</h3>
             <ul className="space-y-3 text-sm text-muted-foreground">
               <li><Link to="/privacy" className="legal-link">Privacy Policy</Link></li>
               <li><Link to="/terms" className="legal-link">Terms &amp; Conditions</Link></li>
@@ -205,3 +206,4 @@ export default function Footer() {
     </footer>
   );
 }
+

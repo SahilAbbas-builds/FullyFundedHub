@@ -15,7 +15,7 @@
     --popover: 226 37% 12%;
     --popover-foreground: 220 20% 96%;
     --primary: 172 100% 38%;
-    --primary-foreground: 220 20% 98%;
+    --primary-foreground: 226 45% 8%;
     --secondary: 226 30% 17%;
     --secondary-foreground: 220 20% 96%;
     --muted: 226 25% 14%;
@@ -288,4 +288,5 @@
 .glass-card-hover:hover .card-spotlight {
   opacity: 1;
 }
+
 
