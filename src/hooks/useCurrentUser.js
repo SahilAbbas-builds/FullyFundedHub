@@ -1,4 +1,4 @@
-import { useAuth } from '@/lib/AuthContext';
+﻿import { useAuth } from '@/lib/AuthContext';
 
 /**
  * Compatibility wrapper: preserves the original { user, loading, refresh }
@@ -15,5 +15,5 @@ export function useCurrentUser() {
 }
 
 export function clearCachedUser() {
-  // No-op for compatibility — AuthContext handles state via onAuthStateChange.
+  // No-op for compatibility â€” AuthContext handles state via onAuthStateChange.
 }
