@@ -5,6 +5,7 @@ import { supabase } from '@/api/supabaseClient';
 import { useCurrentUser } from '@/hooks/useCurrentUser';
 import OpportunityCard from '@/components/OpportunityCard';
 import { getDaysUntil } from '@/components/CountdownBadge';
+import SEO from '@/components/SEO';
 import { Bookmark, Trash2, Calendar, AlertTriangle, Clock } from 'lucide-react';
 
 export default function Dashboard() {
@@ -54,20 +55,26 @@ export default function Dashboard() {
 
   if (loading || dataLoading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-20">
-        <div className="h-64 rounded-2xl glass-card animate-pulse" />
-      </div>
+      <>
+        <SEO title="Dashboard — FullyFundedHub" description="Your saved opportunities and deadlines." noindex />
+        <div className="max-w-5xl mx-auto px-4 py-20">
+          <div className="h-64 rounded-2xl glass-card animate-pulse" />
+        </div>
+      </>
     );
   }
 
   if (!user) {
     return (
-      <div className="max-w-md mx-auto px-4 py-20 text-center">
-        <Bookmark className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
-        <h2 className="font-heading text-2xl font-bold">Log in to view your dashboard</h2>
-        <p className="text-muted-foreground mt-2 text-sm">Save opportunities and track deadlines in one place.</p>
-        <Link to="/login" className="mt-6 inline-block px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold">Log in</Link>
-      </div>
+      <>
+        <SEO title="Dashboard — FullyFundedHub" description="Log in to view your saved opportunities and deadlines." noindex />
+        <div className="max-w-md mx-auto px-4 py-20 text-center">
+          <Bookmark className="w-12 h-12 text-muted-foreground/50 mx-auto mb-4" />
+          <h2 className="font-heading text-2xl font-bold">Log in to view your dashboard</h2>
+          <p className="text-muted-foreground mt-2 text-sm">Save opportunities and track deadlines in one place.</p>
+          <Link to="/login" className="mt-6 inline-block px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold">Log in</Link>
+        </div>
+      </>
     );
   }
 
@@ -77,6 +84,8 @@ export default function Dashboard() {
   });
 
   return (
+    <>
+    <SEO title="Dashboard — FullyFundedHub" description="Your saved opportunities, sorted by deadline urgency." noindex />
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
       <motion.div
         initial={{ opacity: 0, y: 16 }}
@@ -88,7 +97,6 @@ export default function Dashboard() {
         <p className="text-muted-foreground mt-2">Your saved opportunities, sorted by deadline urgency.</p>
       </motion.div>
 
-      {/* Upcoming deadlines alert */}
       {upcoming.length > 0 && (
         <motion.div
           initial={{ opacity: 0, y: 16 }}
@@ -146,5 +154,6 @@ export default function Dashboard() {
         </div>
       )}
     </div>
+    </>
   );
 }

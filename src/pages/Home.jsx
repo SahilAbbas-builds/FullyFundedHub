@@ -117,7 +117,7 @@ export default function Home() {
 
   return (
     <div className="overflow-hidden">
-      <SEO title="FullyFundedHub — Verified Scholarships & Internships" description="Curated, fully funded scholarships and internships for students who want to study and work abroad. Every listing is manually verified. No noise." />
+      <SEO title="FullyFundedHub — Verified Scholarships & Internships Worldwide" description="Browse 150+ manually verified, fully funded scholarships and internships across 40+ countries. Real deadlines, real funding, no fake listings — updated weekly." />
 
       {/* Hero */}
       <section className="relative min-h-[88vh] flex items-center justify-center px-4">
@@ -327,3 +327,5 @@ export default function Home() {
     </div>
   );
 }
+
+

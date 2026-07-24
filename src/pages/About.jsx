@@ -34,7 +34,7 @@ export default function About() {
 
   return (
     <div>
-      <SEO title="About — FullyFundedHub" description="FullyFundedHub started as a personal spreadsheet. We manually verify every scholarship and internship listing — real deadlines, real funding, real eligibility." />
+      <SEO title="About Us — Why We Manually Verify Every Listing" description="FullyFundedHub started as a personal spreadsheet after one too many dead links and expired deadlines. Here's how — and why — we verify every listing by hand." />
 
       {/* Hero */}
       <section className="relative border-b border-white/5 bg-surface-1 overflow-hidden">
@@ -117,3 +117,4 @@ export default function About() {
     </div>
   );
 }
+

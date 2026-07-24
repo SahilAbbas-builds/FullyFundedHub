@@ -57,7 +57,7 @@ export default function Register() {
   if (showConfirmation) {
     return (
       <>
-      <SEO title="Verify your email — FullyFundedHub" description="Check your email to complete your FullyFundedHub registration." />
+      <SEO title="Verify your email — FullyFundedHub" description="Check your email to complete your FullyFundedHub registration." noindex />
       <AuthLayout
         icon={CheckCircle2}
         title="Check your email"
@@ -84,7 +84,7 @@ export default function Register() {
 
   return (
     <>
-    <SEO title="Sign up — FullyFundedHub" description="Create a free FullyFundedHub account to save opportunities, track deadlines, and access application links." />
+    <SEO title="Sign up — FullyFundedHub" description="Create a free FullyFundedHub account to save opportunities, track deadlines, and access application links." noindex />
     <AuthLayout
       icon={UserPlus}
       title="Create your account"

@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { supabase } from '@/api/supabaseClient';
 import ReactMarkdown from 'react-markdown';
@@ -63,7 +63,12 @@ export default function BlogPostDetail() {
 
   return (
     <article>
-      <SEO title={`${post.title} — FullyFundedHub Blog`} description={post.excerpt || `Read "${post.title}" on the FullyFundedHub blog.`} />
+      <SEO
+        title={`${post.title} — FullyFundedHub Blog`}
+        description={post.excerpt || `Read "${post.title}" on the FullyFundedHub blog.`}
+        image={post.cover_image_url}
+        type="article"
+      />
       {post.cover_image_url && (
         <div className="relative h-[40vh] min-h-[280px] overflow-hidden">
           <img src={post.cover_image_url} alt={post.title} className="w-full h-full object-cover" />

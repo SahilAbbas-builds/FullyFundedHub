@@ -92,7 +92,7 @@ export default function Opportunities() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SEO title="All Opportunities — FullyFundedHub" description="Browse verified, fully funded scholarships and internships from around the world. Filter by country, degree level, field of study, and funding type." />
+      <SEO title="All Scholarships & Internships — FullyFundedHub" description="Search and filter 150+ verified, fully funded scholarships and internships by country, degree level, and field of study. Undergraduate to PhD, worldwide." />
 
       <div className="mb-8">
         <h1 className="font-heading text-4xl font-bold">All Opportunities</h1>
@@ -261,3 +261,4 @@ function PillSelect({ options, value, onChange }) {
     </div>
   );
 }
+

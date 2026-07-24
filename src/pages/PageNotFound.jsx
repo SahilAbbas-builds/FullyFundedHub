@@ -5,7 +5,7 @@ import { Home, Compass } from 'lucide-react';
 export default function PageNotFound() {
   return (
     <div className="min-h-[70vh] flex items-center justify-center px-4 py-20 relative overflow-hidden">
-      <SEO title="Page Not Found — FullyFundedHub" description="The page you're looking for doesn't exist." />
+      <SEO title="Page Not Found — FullyFundedHub" description="The page you're looking for doesn't exist." noindex />
       <div className="absolute top-1/3 left-1/3 w-[400px] h-[400px] rounded-full bg-primary/5 blur-[120px]" />
       <div className="absolute bottom-1/4 right-1/4 w-[300px] h-[300px] rounded-full bg-accent/8 blur-[100px]" />
       <div className="relative z-10 text-center max-w-lg mx-auto animate-fade-up">

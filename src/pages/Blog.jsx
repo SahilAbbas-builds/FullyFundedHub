@@ -27,7 +27,7 @@ export default function Blog() {
 
   return (
     <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SEO title="Study Abroad Blog — FullyFundedHub" description="SOP writing tips, visa guidance, application timelines, and study-abroad advice from FullyFundedHub." />
+      <SEO title="Study Abroad Blog — SOP Tips, Visa Guidance & Application Advice" description="Free guides on writing a winning SOP, navigating visa applications, and meeting scholarship deadlines — practical advice from FullyFundedHub." />
       <div className="mb-10 pb-8 border-b border-white/5">
         <h1 className="font-heading text-4xl font-bold">Study Abroad Blog</h1>
         <p className="text-muted-foreground mt-2">SOP writing tips, visa guidance, application timelines, and study-abroad advice.</p>
@@ -95,3 +95,4 @@ export default function Blog() {
     </div>
   );
 }
+

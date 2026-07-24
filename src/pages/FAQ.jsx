@@ -31,7 +31,7 @@ export default function FAQ() {
   const [open, setOpen] = useState(0);
   return (
     <div className="max-w-3xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-      <SEO title="FAQ — FullyFundedHub" description="Answers to common questions about FullyFundedHub: how we verify listings, how to submit opportunities, and more." />
+      <SEO title="FAQ — Is FullyFundedHub Free? How Verification Works" description="Is FullyFundedHub really free? How do you verify listings? Can I submit an opportunity? Answers to the questions students ask most." />
       <motion.div
         initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
@@ -76,3 +76,4 @@ export default function FAQ() {
     </div>
   );
 }
+

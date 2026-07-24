@@ -42,7 +42,7 @@ export default function Login() {
 
   return (
     <>
-    <SEO title="Log in — FullyFundedHub" description="Log in to your FullyFundedHub account to save opportunities and access application links." />
+    <SEO title="Log in — FullyFundedHub" description="Log in to your FullyFundedHub account to save opportunities and access application links." noindex />
     <AuthLayout
       icon={LogIn}
       title="Welcome back"

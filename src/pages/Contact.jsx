@@ -9,7 +9,7 @@ export default function Contact() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
-      <SEO title="Contact — FullyFundedHub" description="Get in touch with FullyFundedHub or submit an opportunity for our team to review and verify." />
+      <SEO title="Contact Us — FullyFundedHub" description="Have a question, found an error, or know about a scholarship we're missing? Reach out or submit an opportunity for our team to verify." />
       <div className="text-center mb-10">
         <h1 className="font-heading text-4xl font-bold">Get in touch</h1>
         <p className="text-muted-foreground mt-2">Have a question or an opportunity to share? We'd love to hear from you.</p>
@@ -264,3 +264,4 @@ function SuccessMessage({ title, desc, onReset }) {
     </motion.div>
   );
 }
+
