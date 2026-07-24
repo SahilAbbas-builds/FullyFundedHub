@@ -256,7 +256,7 @@ export default function Home() {
         <Reveal>
           <div className="relative rounded-3xl overflow-hidden h-[420px] sm:h-[480px] border border-white/10 group">
             <img
-              src="https://images.unsplash.com/photo-1658235081452-c2ded30b8d9f?w=1600&q=80&auto=format&fit=crop"
+              src="https://images.unsplash.com/photo-1658235081452-c2ded30b8d9f?w=1200&h=800&q=75&auto=format&fit=crop"
               alt="International graduates celebrating, holding their graduation caps up together"
               loading="lazy"
               className="absolute inset-0 w-full h-full object-cover group-hover:scale-105 transition-transform duration-700"
@@ -327,5 +327,7 @@ export default function Home() {
     </div>
   );
 }
+
+
 
 
