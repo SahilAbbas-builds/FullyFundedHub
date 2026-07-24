@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Lock, Loader2, AlertTriangle } from "lucide-react";
+import { getAuthErrorMessage } from "@/lib/authErrors";
 import AuthLayout from "@/components/AuthLayout";
 import SEO from "@/components/SEO";
 
@@ -42,7 +43,7 @@ export default function ResetPassword() {
       if (updateError) throw updateError;
       window.location.href = "/login";
     } catch (err) {
-      setError(err.message || "Failed to reset password");
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -132,3 +133,4 @@ export default function ResetPassword() {
     </>
   );
 }
+

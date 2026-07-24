@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { getAuthErrorMessage } from "@/lib/authErrors";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import SEO from "@/components/SEO";
@@ -41,7 +42,7 @@ export default function Register() {
       if (signUpError) throw signUpError;
       setShowConfirmation(true);
     } catch (err) {
-      setError(err.message || "Registration failed");
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -203,3 +204,4 @@ export default function Register() {
     </>
   );
 }
+

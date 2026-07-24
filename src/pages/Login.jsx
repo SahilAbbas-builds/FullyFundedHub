@@ -5,6 +5,7 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { LogIn, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
+import { getAuthErrorMessage } from "@/lib/authErrors";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import SEO from "@/components/SEO";
@@ -27,7 +28,7 @@ export default function Login() {
       if (signInError) throw signInError;
       window.location.href = nextUrl;
     } catch (err) {
-      setError(err.message || "Invalid email or password");
+      setError(getAuthErrorMessage(err));
     } finally {
       setLoading(false);
     }
@@ -142,3 +143,4 @@ export default function Login() {
     </>
   );
 }
+
