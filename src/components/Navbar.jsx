@@ -47,7 +47,7 @@ export default function Navbar() {
         <div className="flex h-16 items-center justify-between">
           <Link to="/" className="flex items-center gap-2.5 group flex-shrink-0">
             <img
-              src="/logo.jpg"
+              src="/logo-small.jpg"
               alt="FullyFundedHub logo"
               className="w-9 h-9 rounded-lg object-cover object-left shadow-lg group-hover:scale-105 transition-transform duration-300"
             />
@@ -197,3 +197,5 @@ export default function Navbar() {
     </header>
   );
 }
+
+

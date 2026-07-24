@@ -107,7 +107,7 @@ export default function Footer() {
           <div className="md:col-span-2">
             <Link to="/" className="flex items-center gap-2.5 mb-4">
               <img
-                src="/logo.jpg"
+                src="/logo-small.jpg"
                 alt="FullyFundedHub logo"
                 className="w-9 h-9 rounded-lg object-cover object-left"
               />
@@ -206,4 +206,6 @@ export default function Footer() {
     </footer>
   );
 }
+
+
 
