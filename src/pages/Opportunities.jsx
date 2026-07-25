@@ -2,6 +2,7 @@
 import { useSearchParams } from 'react-router-dom';
 import { supabase } from '@/api/supabaseClient';
 import OpportunityCard from '@/components/OpportunityCard';
+import CustomSelect from '@/components/CustomSelect';
 import SEO from '@/components/SEO';
 import { Search, SlidersHorizontal, X, Inbox, Clock } from 'lucide-react';
 
@@ -151,24 +152,10 @@ export default function Opportunities() {
               <PillSelect options={FUNDING_TYPES} value={filters.funding_type} onChange={(v) => updateFilter('funding_type', v)} />
             </FilterGroup>
             <FilterGroup label="Country">
-              <select
-                value={filters.country}
-                onChange={(e) => updateFilter('country', e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-background/60 border border-white/10 text-sm outline-none focus:border-primary/40"
-              >
-                <option value="">All countries</option>
-                {countries.map((c) => <option key={c} value={c}>{c}</option>)}
-              </select>
+              <CustomSelect value={filters.country} onChange={(v) => updateFilter('country', v)} options={countries} placeholder="All countries" />
             </FilterGroup>
             <FilterGroup label="Field of Study">
-              <select
-                value={filters.field_of_study}
-                onChange={(e) => updateFilter('field_of_study', e.target.value)}
-                className="w-full px-3 py-2 rounded-lg bg-background/60 border border-white/10 text-sm outline-none focus:border-primary/40"
-              >
-                <option value="">All fields</option>
-                {fields.map((f) => <option key={f} value={f}>{f}</option>)}
-              </select>
+              <CustomSelect value={filters.field_of_study} onChange={(v) => updateFilter('field_of_study', v)} options={fields} placeholder="All fields" />
             </FilterGroup>
           </div>
         </aside>
@@ -261,4 +248,5 @@ function PillSelect({ options, value, onChange }) {
     </div>
   );
 }
+
 
