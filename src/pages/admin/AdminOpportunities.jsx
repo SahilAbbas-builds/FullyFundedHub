@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { supabase } from '@/api/supabaseClient';
 import { getDaysUntil, getDeadlineStatus } from '@/components/CountdownBadge';
-import { Plus, Pencil, Trash2, Archive, Loader2 } from 'lucide-react';
+import { Plus, Pencil, Trash2, Archive, Loader2, Upload } from 'lucide-react';
 
 export default function AdminOpportunities() {
   const [opportunities, setOpportunities] = useState([]);
@@ -70,6 +70,9 @@ export default function AdminOpportunities() {
           <p className="text-sm text-muted-foreground">{opportunities.length} total listings</p>
         </div>
         <div className="flex gap-2">
+          <Link to="/admin/opportunities/bulk-import" className="flex items-center gap-2 px-4 py-2.5 rounded-xl border border-white/15 text-sm font-medium hover:bg-white/5 transition-all">
+            <Upload className="w-4 h-4" /> Bulk Import
+          </Link>
           <button
             onClick={handleBulkExpire}
             disabled={bulkLoading}
@@ -111,7 +114,7 @@ export default function AdminOpportunities() {
                     <tr key={opp.id} className="border-b border-white/5 hover:bg-white/5 transition-colors">
                       <td className="px-4 py-3">
                         <div className="font-medium">{opp.title}</div>
-                        <div className="text-xs text-muted-foreground">{opp.organization} · {opp.country}</div>
+                        <div className="text-xs text-muted-foreground">{opp.organization} Â· {opp.country}</div>
                       </td>
                       <td className="px-4 py-3">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-medium border ${opp.opportunity_type === 'Scholarship' ? 'bg-primary/10 text-primary border-primary/20' : 'bg-accent/10 text-emerald-400 border-accent/20'}`}>
@@ -129,7 +132,7 @@ export default function AdminOpportunities() {
                               {dStatus.label}
                             </span>
                           </div>
-                        ) : <span className="text-xs text-muted-foreground">—</span>}
+                        ) : <span className="text-xs text-muted-foreground">â€”</span>}
                       </td>
                       <td className="px-4 py-3">
                         <div className="flex items-center justify-end gap-1">

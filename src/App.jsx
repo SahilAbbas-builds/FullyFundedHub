@@ -32,6 +32,7 @@ const AdminLayout = lazy(() => import('@/pages/admin/AdminLayout'));
 const AdminDashboard = lazy(() => import('@/pages/admin/AdminDashboard'));
 const AdminOpportunities = lazy(() => import('@/pages/admin/AdminOpportunities'));
 const AdminOpportunityForm = lazy(() => import('@/pages/admin/AdminOpportunityForm'));
+const AdminBulkImport = lazy(() => import('@/pages/admin/AdminBulkImport'));
 const AdminSubmissions = lazy(() => import('@/pages/admin/AdminSubmissions'));
 const AdminBlog = lazy(() => import('@/pages/admin/AdminBlog'));
 const AdminLeads = lazy(() => import('@/pages/admin/AdminLeads'));
@@ -76,6 +77,7 @@ const AuthenticatedApp = () => {
           <Route index element={<AdminDashboard />} />
           <Route path="opportunities" element={<AdminOpportunities />} />
           <Route path="opportunities/new" element={<AdminOpportunityForm />} />
+          <Route path="opportunities/bulk-import" element={<AdminBulkImport />} />
           <Route path="opportunities/:id/edit" element={<AdminOpportunityForm />} />
           <Route path="submissions" element={<AdminSubmissions />} />
           <Route path="blog" element={<AdminBlog />} />
@@ -125,4 +127,5 @@ function App() {
 }
 
 export default App
+
 

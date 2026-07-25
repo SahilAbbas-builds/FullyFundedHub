@@ -1,6 +1,6 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useRef } from 'react';
 import { supabase } from '@/api/supabaseClient';
-import { Plus, Pencil, Trash2, X, Loader2, Eye } from 'lucide-react';
+import { Plus, Pencil, Trash2, X, Loader2, Eye, ImagePlus } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 
 const emptyPost = { title: '', excerpt: '', content: '', cover_image_url: '', author: '', category: '', published: false };
@@ -8,7 +8,7 @@ const emptyPost = { title: '', excerpt: '', content: '', cover_image_url: '', au
 export default function AdminBlog() {
   const [posts, setPosts] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [editing, setEditing] = useState(null); // null = list view, 'new' or post object
+  const [editing, setEditing] = useState(null);
 
   const load = () => {
     setLoading(true);
@@ -23,7 +23,7 @@ export default function AdminBlog() {
       });
   };
 
-  useEffect(() => { load(); }, []);
+  useState(() => { load(); }, []);
 
   const handleDelete = async (id) => {
     if (!confirm('Delete this post permanently?')) return;
@@ -90,6 +90,135 @@ export default function AdminBlog() {
   );
 }
 
+// Resizes an image file client-side via Canvas (max 1600px on the long edge,
+// JPEG quality 0.82) before upload, so large phone-camera photos don't slow
+// down the site. Runs entirely in the browser - no API, no cost.
+function compressImage(file, maxDimension = 1600, quality = 0.82) {
+  return new Promise((resolve, reject) => {
+    const img = new Image();
+    const objectUrl = URL.createObjectURL(file);
+    img.onload = () => {
+      URL.revokeObjectURL(objectUrl);
+      let { width, height } = img;
+      if (width > maxDimension || height > maxDimension) {
+        if (width > height) {
+          height = Math.round((height * maxDimension) / width);
+          width = maxDimension;
+        } else {
+          width = Math.round((width * maxDimension) / height);
+          height = maxDimension;
+        }
+      }
+      const canvas = document.createElement('canvas');
+      canvas.width = width;
+      canvas.height = height;
+      const ctx = canvas.getContext('2d');
+      ctx.drawImage(img, 0, 0, width, height);
+      canvas.toBlob((blob) => {
+        if (blob) resolve(blob);
+        else reject(new Error('Compression failed'));
+      }, 'image/jpeg', quality);
+    };
+    img.onerror = () => {
+      URL.revokeObjectURL(objectUrl);
+      reject(new Error('Could not read image'));
+    };
+    img.src = objectUrl;
+  });
+}
+
+function CoverImageUploader({ value, onChange }) {
+  const [uploading, setUploading] = useState(false);
+  const [dragOver, setDragOver] = useState(false);
+  const [error, setError] = useState('');
+  const fileInputRef = useRef(null);
+
+  const handleFile = async (file) => {
+    if (!file || !file.type.startsWith('image/')) {
+      setError('Please choose an image file.');
+      return;
+    }
+    setError('');
+    setUploading(true);
+    try {
+      const compressedBlob = await compressImage(file);
+      const ext = 'jpg';
+      const path = `covers/${Date.now()}-${Math.random().toString(36).slice(2, 8)}.${ext}`;
+      const { error: uploadError } = await supabase.storage
+        .from('blog-images')
+        .upload(path, compressedBlob, { contentType: 'image/jpeg', upsert: false });
+      if (uploadError) throw uploadError;
+      const { data } = supabase.storage.from('blog-images').getPublicUrl(path);
+      onChange(data.publicUrl);
+    } catch (err) {
+      setError('Upload failed: ' + err.message);
+    } finally {
+      setUploading(false);
+    }
+  };
+
+  return (
+    <div>
+      <label className="block text-sm font-medium mb-1.5">Cover image</label>
+      <div
+        onClick={() => !uploading && fileInputRef.current?.click()}
+        onDragOver={(e) => { e.preventDefault(); setDragOver(true); }}
+        onDragLeave={() => setDragOver(false)}
+        onDrop={(e) => {
+          e.preventDefault();
+          setDragOver(false);
+          const file = e.dataTransfer.files?.[0];
+          if (file) handleFile(file);
+        }}
+        onPaste={(e) => {
+          const item = Array.from(e.clipboardData.items || []).find((i) => i.type.startsWith('image/'));
+          if (item) handleFile(item.getAsFile());
+        }}
+        tabIndex={0}
+        className={`relative rounded-xl border-2 border-dashed cursor-pointer transition-all overflow-hidden ${
+          dragOver ? 'border-primary bg-primary/5' : 'border-white/15 hover:border-white/30'
+        }`}
+      >
+        <input
+          ref={fileInputRef}
+          type="file"
+          accept="image/*"
+          className="hidden"
+          onChange={(e) => { const f = e.target.files?.[0]; if (f) handleFile(f); }}
+        />
+        {value ? (
+          <div className="relative">
+            <img src={value} alt="Cover preview" className="w-full h-40 object-cover" />
+            <div className="absolute inset-0 bg-black/50 opacity-0 hover:opacity-100 transition-opacity flex items-center justify-center">
+              <p className="text-white text-sm font-medium">Click, drop, or paste to replace</p>
+            </div>
+          </div>
+        ) : (
+          <div className="h-40 flex flex-col items-center justify-center gap-2 text-muted-foreground">
+            {uploading ? (
+              <>
+                <Loader2 className="w-6 h-6 animate-spin" />
+                <p className="text-xs">Compressing & uploading...</p>
+              </>
+            ) : (
+              <>
+                <ImagePlus className="w-6 h-6" />
+                <p className="text-xs">Click, drag & drop, or paste an image</p>
+              </>
+            )}
+          </div>
+        )}
+        {uploading && value && (
+          <div className="absolute inset-0 bg-black/60 flex items-center justify-center">
+            <Loader2 className="w-6 h-6 animate-spin text-white" />
+          </div>
+        )}
+      </div>
+      {error && <p className="text-xs text-destructive mt-1.5">{error}</p>}
+    </div>
+  );
+}
+
 function BlogEditor({ post, onClose, onSaved }) {
   const [form, setForm] = useState(post || emptyPost);
   const [saving, setSaving] = useState(false);
@@ -124,15 +253,16 @@ function BlogEditor({ post, onClose, onSaved }) {
       </div>
 
       <div className="space-y-4">
-        <input className="input-base text-lg font-semibold" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Post title…" />
+        <input className="input-base text-lg font-semibold" value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} placeholder="Post title..." />
 
-        <input className="input-base" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} placeholder="Short excerpt (shown in listing)…" />
+        <input className="input-base" value={form.excerpt} onChange={(e) => setForm({ ...form, excerpt: e.target.value })} placeholder="Short excerpt (shown in listing)..." />
 
-        <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <input className="input-base" value={form.author} onChange={(e) => setForm({ ...form, author: e.target.value })} placeholder="Author name" />
           <input className="input-base" value={form.category} onChange={(e) => setForm({ ...form, category: e.target.value })} placeholder="Category (e.g. SOP Tips)" />
-          <input className="input-base" value={form.cover_image_url} onChange={(e) => setForm({ ...form, cover_image_url: e.target.value })} placeholder="Cover image URL" />
         </div>
+
+        <CoverImageUploader value={form.cover_image_url} onChange={(url) => setForm({ ...form, cover_image_url: url })} />
 
         <div>
           <div className="flex items-center justify-between mb-1.5">
@@ -144,7 +274,7 @@ function BlogEditor({ post, onClose, onSaved }) {
             className="input-base resize-y font-mono text-xs leading-relaxed"
             value={form.content}
             onChange={(e) => setForm({ ...form, content: e.target.value })}
-            placeholder="Write your post content here…"
+            placeholder="Write your post content here..."
           />
         </div>
 
