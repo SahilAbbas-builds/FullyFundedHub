@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+﻿import { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { supabase } from '@/api/supabaseClient';
 import { Loader2, Save, Send, Sparkles, ArrowLeft } from 'lucide-react';
@@ -7,7 +7,7 @@ const emptyForm = {
   title: '', organization: '', country: '', country_code: '',
   opportunity_type: 'Scholarship', degree_level: 'Masters', field_of_study: '',
   funding_type: 'Full', funding_amount: '', deadline: '', application_url: '',
-  eligibility_criteria: [], raw_notes: '', description: '', is_featured: false,
+  eligibility_criteria: [], raw_notes: '', description: '', is_featured: false, deadline_note: '', deadline_note: '',
   status: 'draft',
 };
 
@@ -43,10 +43,10 @@ export default function AdminOpportunityForm() {
 
   const handleAiFormat = () => {
     // TODO: AI-assisted formatting was previously powered by Base44's LLM
-    // integration. Not yet reconnected post-migration — needs a backend
+    // integration. Not yet reconnected post-migration â€” needs a backend
     // (e.g. a Supabase Edge Function) to call an LLM API without exposing
     // a key client-side. For now, enter eligibility criteria manually below.
-    alert('AI Format is temporarily unavailable — please enter eligibility criteria manually for now.');
+    alert('AI Format is temporarily unavailable â€” please enter eligibility criteria manually for now.');
   };
 
   const handleSave = async (publish = false) => {
@@ -129,7 +129,7 @@ export default function AdminOpportunityForm() {
         </div>
 
         <FormField label="Funding amount / coverage">
-          <input className="input-base" value={form.funding_amount} onChange={(e) => update('funding_amount', e.target.value)} placeholder="e.g. Full tuition + £18,000 stipend" />
+          <input className="input-base" value={form.funding_amount} onChange={(e) => update('funding_amount', e.target.value)} placeholder="e.g. Full tuition + Â£18,000 stipend" />
         </FormField>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
@@ -142,7 +142,7 @@ export default function AdminOpportunityForm() {
         </div>
 
         <FormField label="Description / Overview">
-          <textarea rows={3} className="input-base resize-none" value={form.description} onChange={(e) => update('description', e.target.value)} placeholder="Brief overview of the opportunity…" />
+          <textarea rows={3} className="input-base resize-none" value={form.description} onChange={(e) => update('description', e.target.value)} placeholder="Brief overview of the opportunityâ€¦" />
         </FormField>
 
         {/* Raw Notes + AI Format */}
@@ -167,7 +167,7 @@ export default function AdminOpportunityForm() {
             className="input-base resize-none font-mono text-xs"
             value={form.raw_notes}
             onChange={(e) => update('raw_notes', e.target.value)}
-            placeholder="Paste raw, unstructured text from the official source here…"
+            placeholder="Paste raw, unstructured text from the official source hereâ€¦"
           />
         </div>
 
@@ -211,3 +211,4 @@ function FormField({ label, required, children }) {
     </div>
   );
 }
+

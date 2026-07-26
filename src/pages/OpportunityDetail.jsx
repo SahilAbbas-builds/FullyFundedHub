@@ -159,7 +159,7 @@ export default function OpportunityDetail() {
                     <Calendar className="w-3.5 h-3.5" /> Application Deadline
                   </div>
                   <p className="font-heading text-2xl font-bold">
-                    {opp.deadline ? new Date(opp.deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : 'Rolling'}
+                    {opp.deadline ? new Date(opp.deadline).toLocaleDateString('en-US', { year: 'numeric', month: 'long', day: 'numeric' }) : (opp.deadline_note || 'Rolling')}
                   </p>
                 </div>
                 <div className="text-right">
@@ -218,7 +218,7 @@ export default function OpportunityDetail() {
           <div className="space-y-4">
             <div className="glass-card rounded-2xl p-6 lg:sticky lg:top-20">
               <div className="flex items-center justify-between mb-4">
-                <CountdownBadge deadline={opp.deadline} />
+                <CountdownBadge deadline={opp.deadline} deadlineNote={opp.deadline_note} />
                 <SaveButton opportunityId={opp.id} />
               </div>
 
@@ -283,3 +283,6 @@ export default function OpportunityDetail() {
     </div>
   );
 }
+
+
+

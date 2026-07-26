@@ -1,4 +1,4 @@
-import { Clock } from 'lucide-react';
+﻿import { Clock } from 'lucide-react';
 
 export function getDaysUntil(deadline) {
   if (!deadline) return null;
@@ -27,7 +27,15 @@ const toneStyles = {
   neutral: 'bg-muted text-muted-foreground border-border',
 };
 
-export default function CountdownBadge({ deadline, className = '' }) {
+export default function CountdownBadge({ deadline, deadlineNote, className = '' }) {
+  if (!deadline && deadlineNote) {
+    return (
+      <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${toneStyles.neutral} ${className}`}>
+        <Clock className="w-3 h-3" />
+        {deadlineNote}
+      </span>
+    );
+  }
   const status = getDeadlineStatus(deadline);
   return (
     <span className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold border ${toneStyles[status.tone]} ${className}`}>
@@ -36,3 +44,5 @@ export default function CountdownBadge({ deadline, className = '' }) {
     </span>
   );
 }
+
+

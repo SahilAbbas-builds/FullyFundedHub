@@ -109,7 +109,7 @@ export default function OpportunityCard({ opportunity }) {
           </div>
 
           <div className="mt-auto pt-2 flex items-center justify-between">
-            <CountdownBadge deadline={opportunity.deadline} />
+            <CountdownBadge deadline={opportunity.deadline} deadlineNote={opportunity.deadline_note} />
             {opportunity.field_of_study && (
               <span className="text-xs text-muted-foreground truncate max-w-[50%]">{opportunity.field_of_study}</span>
             )}
@@ -119,3 +119,4 @@ export default function OpportunityCard({ opportunity }) {
     </motion.div>
   );
 }
+
