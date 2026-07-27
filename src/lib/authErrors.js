@@ -1,7 +1,6 @@
 ﻿export function getAuthErrorMessage(error) {
   const msg = error?.message || '';
   const lower = msg.toLowerCase();
-
   if (lower.includes('invalid login credentials')) {
     return 'Incorrect email or password. Double-check both and try again.';
   }
@@ -23,7 +22,6 @@
   if (lower.includes('network') || lower.includes('fetch')) {
     return 'Connection issue — please check your internet and try again.';
   }
-
   return msg || 'Something went wrong. Please try again.';
 }
 
