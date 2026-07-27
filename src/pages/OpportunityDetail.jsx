@@ -6,7 +6,7 @@ import CountdownBadge, { getDaysUntil, getDeadlineStatus } from '@/components/Co
 import SaveButton from '@/components/SaveButton';
 import OpportunityCard from '@/components/OpportunityCard';
 import SEO from '@/components/SEO';
-import { Building2, MapPin, GraduationCap, Wallet, ExternalLink, CheckCircle2, ArrowLeft, Calendar, Clock, Lock, X } from 'lucide-react';
+import { Building2, MapPin, GraduationCap, Wallet, ExternalLink, CheckCircle2, ArrowLeft, Calendar, Clock, Lock, X, Gift, ListChecks } from 'lucide-react';
 
 export default function OpportunityDetail() {
   const { id } = useParams();
@@ -75,7 +75,6 @@ export default function OpportunityDetail() {
     <div>
       <SEO title={`${opp.title} — FullyFundedHub`} description={opp.description || `${opp.opportunity_type} at ${opp.organization || 'various organizations'} in ${opp.country || 'multiple countries'}. ${opp.funding_type} funding available.`} />
 
-      {/* Auth prompt modal */}
       {showAuthPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setShowAuthPrompt(false)}>
           <div className="glass-card rounded-2xl p-8 max-w-md w-full relative" onClick={(e) => e.stopPropagation()}>
@@ -101,7 +100,6 @@ export default function OpportunityDetail() {
         </div>
       )}
 
-      {/* Hero header */}
       <div className="relative border-b border-white/5 bg-card/30 overflow-hidden">
         <div className="absolute -top-20 -right-20 w-72 h-72 rounded-full bg-primary/10 blur-[100px]" />
         <div className="relative max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
@@ -109,35 +107,49 @@ export default function OpportunityDetail() {
             <ArrowLeft className="w-4 h-4" /> All opportunities
           </Link>
 
-          <div className="flex flex-wrap items-center gap-2 mb-4">
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-              opp.opportunity_type === 'Scholarship' ? 'bg-primary/15 text-primary border-primary/30' : 'bg-accent/15 text-emerald-400 border-accent/30'
-            }`}>{opp.opportunity_type}</span>
-            <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
-              opp.funding_type === 'Full' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
-            }`}>{opp.funding_type} Funding</span>
-            {opp.is_featured && (
-              <span className="px-3 py-1 rounded-full text-xs font-semibold border bg-primary/15 text-primary border-primary/30">★ Featured</span>
-            )}
-          </div>
+          <div className="flex items-start justify-between gap-6 flex-wrap">
+            <div className="flex-1 min-w-[280px]">
+              <div className="flex flex-wrap items-center gap-2 mb-4">
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                  opp.opportunity_type === 'Scholarship' ? 'bg-primary/15 text-primary border-primary/30' : 'bg-accent/15 text-emerald-400 border-accent/30'
+                }`}>{opp.opportunity_type}</span>
+                <span className={`px-3 py-1 rounded-full text-xs font-semibold border ${
+                  opp.funding_type === 'Full' ? 'bg-emerald-500/10 text-emerald-400 border-emerald-500/30' : 'bg-amber-500/10 text-amber-400 border-amber-500/30'
+                }`}>{opp.funding_type} Funding</span>
+                {opp.is_featured && (
+                  <span className="px-3 py-1 rounded-full text-xs font-semibold border bg-primary/15 text-primary border-primary/30">★ Featured</span>
+                )}
+              </div>
 
-          <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">{opp.title}</h1>
+              <h1 className="font-heading text-3xl sm:text-4xl lg:text-5xl font-bold leading-tight">{opp.title}</h1>
 
-          <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
-            {opp.organization && (
-              <span className="flex items-center gap-2"><Building2 className="w-4 h-4" /> {opp.organization}</span>
-            )}
+              <div className="mt-6 flex flex-wrap items-center gap-x-6 gap-y-3 text-sm text-muted-foreground">
+                {opp.organization && (
+                  <span className="flex items-center gap-2"><Building2 className="w-4 h-4" /> {opp.organization}</span>
+                )}
+                {opp.degree_level && (
+                  <span className="flex items-center gap-2"><GraduationCap className="w-4 h-4" /> {opp.degree_level}</span>
+                )}
+                {opp.field_of_study && (
+                  <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {opp.field_of_study}</span>
+                )}
+              </div>
+            </div>
+
+            {/* PROMINENT COUNTRY FLAG — large badge on the hero */}
             {opp.country && (
-              <span className="flex items-center gap-2">
-                {flagUrl && <img src={flagUrl} alt={opp.country} className="w-5 h-4 rounded-sm" />}
-                {opp.country}
-              </span>
-            )}
-            {opp.degree_level && (
-              <span className="flex items-center gap-2"><GraduationCap className="w-4 h-4" /> {opp.degree_level}</span>
-            )}
-            {opp.field_of_study && (
-              <span className="flex items-center gap-2"><MapPin className="w-4 h-4" /> {opp.field_of_study}</span>
+              <div className="flex flex-col items-center gap-2 flex-shrink-0">
+                <div className="w-20 h-20 rounded-2xl overflow-hidden border-2 border-white/15 shadow-xl shadow-black/30 glass-card">
+                  {flagUrl ? (
+                    <img src={flagUrl} alt={opp.country} className="w-full h-full object-cover" />
+                  ) : (
+                    <div className="w-full h-full flex items-center justify-center">
+                      <MapPin className="w-8 h-8 text-muted-foreground" />
+                    </div>
+                  )}
+                </div>
+                <span className="text-xs font-semibold text-foreground/80 text-center max-w-[100px]">{opp.country}</span>
+              </div>
             )}
           </div>
         </div>
@@ -145,9 +157,7 @@ export default function OpportunityDetail() {
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 lg:px-8 py-10">
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-          {/* Main content */}
           <div className="lg:col-span-2 space-y-8">
-            {/* Deadline banner */}
             <div className={`glass-card rounded-2xl p-6 border-l-4 ${
               deadlineStatus.tone === 'urgent' ? 'border-l-destructive' :
               deadlineStatus.tone === 'approaching' ? 'border-l-amber-500' :
@@ -176,11 +186,29 @@ export default function OpportunityDetail() {
               </div>
             </div>
 
-            {/* Description */}
             {opp.description && (
               <div>
                 <h2 className="font-heading text-xl font-bold mb-3">Overview</h2>
                 <p className="text-muted-foreground leading-relaxed whitespace-pre-line">{opp.description}</p>
+              </div>
+            )}
+
+            {/* BENEFITS — new section */}
+            {opp.benefits && opp.benefits.length > 0 && (
+              <div>
+                <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
+                  <Gift className="w-5 h-5 text-primary" /> Benefits
+                </h2>
+                <div className="grid sm:grid-cols-2 gap-3">
+                  {opp.benefits.map((item, i) => (
+                    <div key={i} className="flex items-start gap-3 glass-card rounded-xl p-3.5">
+                      <div className="w-6 h-6 rounded-full bg-primary/15 border border-primary/30 flex items-center justify-center flex-shrink-0 mt-0.5">
+                        <CheckCircle2 className="w-3.5 h-3.5 text-primary" />
+                      </div>
+                      <span className="text-sm leading-relaxed">{item}</span>
+                    </div>
+                  ))}
+                </div>
               </div>
             )}
 
@@ -199,7 +227,30 @@ export default function OpportunityDetail() {
               </div>
             )}
 
-            {/* Funding details */}
+            {/* APPLICATION STEPS — new section, numbered timeline */}
+            {opp.application_steps && opp.application_steps.length > 0 && (
+              <div>
+                <h2 className="font-heading text-xl font-bold mb-4 flex items-center gap-2">
+                  <ListChecks className="w-5 h-5 text-accent" /> How to Apply
+                </h2>
+                <div className="relative space-y-1">
+                  {opp.application_steps.map((step, i) => (
+                    <div key={i} className="relative flex gap-4 pb-6 last:pb-0">
+                      {i < opp.application_steps.length - 1 && (
+                        <div className="absolute left-[15px] top-8 bottom-0 w-px bg-gradient-to-b from-accent/40 to-transparent" />
+                      )}
+                      <div className="relative z-10 w-8 h-8 rounded-full bg-gradient-to-br from-accent to-primary flex items-center justify-center flex-shrink-0 text-xs font-bold text-white shadow-lg shadow-accent/25">
+                        {i + 1}
+                      </div>
+                      <div className="glass-card rounded-xl p-4 flex-1">
+                        <p className="text-sm leading-relaxed">{step}</p>
+                      </div>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            )}
+
             {opp.funding_amount && (
               <div>
                 <h2 className="font-heading text-xl font-bold mb-3">Funding Details</h2>
@@ -214,7 +265,6 @@ export default function OpportunityDetail() {
             )}
           </div>
 
-          {/* Sidebar */}
           <div className="space-y-4">
             <div className="glass-card rounded-2xl p-6 lg:sticky lg:top-20">
               <div className="flex items-center justify-between mb-4">
@@ -270,7 +320,6 @@ export default function OpportunityDetail() {
           </div>
         </div>
 
-        {/* Related */}
         {related.length > 0 && (
           <div className="mt-16">
             <h2 className="font-heading text-2xl font-bold mb-6">Related opportunities</h2>
@@ -283,6 +332,3 @@ export default function OpportunityDetail() {
     </div>
   );
 }
-
-
-
