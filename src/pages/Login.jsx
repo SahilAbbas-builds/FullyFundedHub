@@ -4,8 +4,9 @@ import { supabase } from "@/api/supabaseClient";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { LogIn, Mail, Lock, Loader2, Eye, EyeOff } from "lucide-react";
-import { getAuthErrorMessage } from "@/lib/authErrors";
+import { LogIn, Mail, Lock, Loader2, Eye, EyeOff, CheckCircle2 } from "lucide-react";
+import { getAuthErrorMessage, isUnverifiedEmailError } from "@/lib/authErrors";
+import { useResendCooldown } from "@/lib/useResendCooldown";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import SEO from "@/components/SEO";
@@ -16,12 +17,18 @@ export default function Login() {
   const [error, setError] = useState("");
   const [loading, setLoading] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
+  const [unverified, setUnverified] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const { secondsLeft, start, isActive } = useResendCooldown(45);
 
   const nextUrl = new URLSearchParams(window.location.search).get("next") || "/";
 
   const handleSubmit = async (e) => {
     e.preventDefault();
     setError("");
+    setUnverified(false);
+    setResendSent(false);
     setLoading(true);
     try {
       const { error: signInError } = await supabase.auth.signInWithPassword({ email, password });
@@ -29,6 +36,7 @@ export default function Login() {
       window.location.href = nextUrl;
     } catch (err) {
       setError(getAuthErrorMessage(err));
+      if (isUnverifiedEmailError(err)) setUnverified(true);
     } finally {
       setLoading(false);
     }
@@ -39,6 +47,21 @@ export default function Login() {
       provider: "google",
       options: { redirectTo: `${window.location.origin}${nextUrl}` }
     });
+  };
+
+  const handleResend = async () => {
+    if (!email || isActive) return;
+    setResendLoading(true);
+    setResendSent(false);
+    try {
+      await supabase.auth.resend({ type: 'signup', email });
+      setResendSent(true);
+      start(45);
+    } catch {
+      // stays quiet — the rate-limit case is covered by the cooldown timer itself
+    } finally {
+      setResendLoading(false);
+    }
   };
 
   return (
@@ -57,10 +80,49 @@ export default function Login() {
         </>
       }
     >
+      <Button
+        variant="outline"
+        className="w-full h-12 text-sm font-medium mb-6"
+        onClick={handleGoogle}
+      >
+        <GoogleIcon className="w-5 h-5 mr-2" />
+        Continue with Google
+      </Button>
+
+      <div className="relative mb-6">
+        <div className="absolute inset-0 flex items-center">
+          <div className="w-full border-t border-border" />
+        </div>
+        <div className="relative flex justify-center text-xs uppercase">
+          <span className="bg-card px-3 text-muted-foreground">or</span>
+        </div>
+      </div>
 
       {error && (
         <div className="mb-4 p-3 rounded-lg bg-destructive/10 text-destructive text-sm">
           {error}
+          {unverified && (
+            <div className="mt-3 pt-3 border-t border-destructive/20">
+              {resendSent ? (
+                <p className="flex items-center gap-1.5 text-primary text-sm font-medium">
+                  <CheckCircle2 className="w-4 h-4" /> Verification email resent — check your inbox.
+                </p>
+              ) : (
+                <button
+                  type="button"
+                  onClick={handleResend}
+                  disabled={resendLoading || isActive}
+                  className="text-sm font-medium text-primary hover:underline disabled:opacity-50 disabled:no-underline"
+                >
+                  {resendLoading
+                    ? "Sending..."
+                    : isActive
+                    ? `Resend available in ${secondsLeft}s`
+                    : "Resend verification email"}
+                </button>
+              )}
+            </div>
+          )}
         </div>
       )}
 
@@ -126,5 +188,3 @@ export default function Login() {
     </>
   );
 }
-
-

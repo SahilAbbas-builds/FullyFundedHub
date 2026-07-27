@@ -17,7 +17,7 @@
   if (lower.includes('invalid') && lower.includes('email')) {
     return "That doesn't look like a valid email address. Please check and try again.";
   }
-  if (lower.includes('rate limit') || lower.includes('too many requests')) {
+  if (lower.includes('rate limit') || lower.includes('too many requests') || lower.includes('for security purposes')) {
     return 'Too many attempts. Please wait a moment and try again.';
   }
   if (lower.includes('network') || lower.includes('fetch')) {
@@ -25,4 +25,14 @@
   }
 
   return msg || 'Something went wrong. Please try again.';
+}
+
+export function isUnverifiedEmailError(error) {
+  const msg = (error?.message || '').toLowerCase();
+  return msg.includes('email not confirmed');
+}
+
+export function isRateLimitError(error) {
+  const msg = (error?.message || '').toLowerCase();
+  return msg.includes('rate limit') || msg.includes('too many requests') || msg.includes('for security purposes');
 }

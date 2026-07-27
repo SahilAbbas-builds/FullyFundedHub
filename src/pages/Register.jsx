@@ -7,6 +7,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { UserPlus, Mail, Lock, Loader2, Eye, EyeOff, CheckCircle2 } from "lucide-react";
 import { getAuthErrorMessage } from "@/lib/authErrors";
+import { useResendCooldown } from "@/lib/useResendCooldown";
 import AuthLayout from "@/components/AuthLayout";
 import GoogleIcon from "@/components/GoogleIcon";
 import SEO from "@/components/SEO";
@@ -20,6 +21,9 @@ export default function Register() {
   const [showConfirmation, setShowConfirmation] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
+  const [resendSent, setResendSent] = useState(false);
+  const [resendLoading, setResendLoading] = useState(false);
+  const { secondsLeft, start, isActive } = useResendCooldown(45);
 
   const nextUrl = new URLSearchParams(window.location.search).get("next") || "/";
 
@@ -41,6 +45,7 @@ export default function Register() {
       });
       if (signUpError) throw signUpError;
       setShowConfirmation(true);
+      start(45);
     } catch (err) {
       setError(getAuthErrorMessage(err));
     } finally {
@@ -53,6 +58,21 @@ export default function Register() {
       provider: "google",
       options: { redirectTo: `${window.location.origin}${nextUrl}` }
     });
+  };
+
+  const handleResend = async () => {
+    if (!email || isActive) return;
+    setResendLoading(true);
+    setResendSent(false);
+    try {
+      await supabase.auth.resend({ type: 'signup', email });
+      setResendSent(true);
+      start(45);
+    } catch {
+      // stays quiet — cooldown timer already prevents spamming
+    } finally {
+      setResendLoading(false);
+    }
   };
 
   if (showConfirmation) {
@@ -72,6 +92,26 @@ export default function Register() {
           <p className="text-center text-sm text-muted-foreground leading-relaxed">
             Click the link in the email to confirm your account. Once confirmed, you can log in and start saving opportunities.
           </p>
+
+          <div className="mt-4 text-center text-sm">
+            {resendSent ? (
+              <p className="text-primary font-medium">Email resent — check your inbox.</p>
+            ) : (
+              <button
+                type="button"
+                onClick={handleResend}
+                disabled={resendLoading || isActive}
+                className="text-primary hover:underline disabled:opacity-50 disabled:no-underline font-medium"
+              >
+                {resendLoading
+                  ? "Sending..."
+                  : isActive
+                  ? `Didn't get it? Resend in ${secondsLeft}s`
+                  : "Didn't get it? Resend email"}
+              </button>
+            )}
+          </div>
+
           <Link to="/login" className="mt-6 block w-full">
             <Button className="w-full h-12 font-medium">
               Go to log in
@@ -204,5 +244,3 @@ export default function Register() {
     </>
   );
 }
-
-
