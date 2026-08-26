@@ -55,11 +55,41 @@ export default function BlogPostDetail() {
   if (!post) {
     return (
       <div className="max-w-3xl mx-auto px-4 py-20 text-center">
+        <SEO title="Post Not Found — FullyFundedHub" description="This blog post doesn't exist or is no longer available." noindex />
         <p className="text-muted-foreground">Post not found.</p>
         <Link to="/blog" className="mt-4 inline-block text-primary hover:underline">← Back to blog</Link>
       </div>
     );
   }
+
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://fullyfundedhub.com/blog/${post.id}`;
+
+  const articleJsonLd = {
+    '@type': 'Article',
+    headline: post.title,
+    description: post.excerpt || undefined,
+    image: post.cover_image_url || undefined,
+    datePublished: post.created_at || undefined,
+    dateModified: post.updated_at || post.created_at || undefined,
+    author: post.author ? { '@type': 'Person', name: post.author } : { '@type': 'Organization', name: 'FullyFundedHub' },
+    publisher: {
+      '@type': 'Organization',
+      name: 'FullyFundedHub',
+      logo: { '@type': 'ImageObject', url: 'https://fullyfundedhub.com/logo.jpg' },
+    },
+    mainEntityOfPage: pageUrl,
+  };
+
+  const breadcrumbJsonLd = {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fullyfundedhub.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Blog', item: 'https://fullyfundedhub.com/blog' },
+      { '@type': 'ListItem', position: 3, name: post.title, item: pageUrl },
+    ],
+  };
+
+  const jsonLd = { '@context': 'https://schema.org', '@graph': [articleJsonLd, breadcrumbJsonLd] };
 
   return (
     <article>
@@ -68,6 +98,7 @@ export default function BlogPostDetail() {
         description={post.excerpt || `Read "${post.title}" on the FullyFundedHub blog.`}
         image={post.cover_image_url}
         type="article"
+        jsonLd={jsonLd}
       />
       {post.cover_image_url && (
         <div className="relative h-[40vh] min-h-[280px] overflow-hidden">

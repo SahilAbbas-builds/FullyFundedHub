@@ -4,7 +4,7 @@
     <meta charset="UTF-8" />
     <link rel="icon" type="image/jpeg" href="/logo.jpg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <meta name="description" content="FullyFundedHub — curated, fully funded scholarships and internships for students who want to study and work abroad. Verified. No noise." />
+    <meta name="description" content="Curated, manually verified fully funded scholarships and internships for students who want to study and work abroad. Real deadlines, real funding, no fake listings." />
     <link rel="manifest" href="/manifest.json" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
@@ -16,13 +16,47 @@
     <meta property="og:type" content="website" />
     <meta property="og:site_name" content="FullyFundedHub" />
     <meta property="og:title" content="FullyFundedHub — Verified Scholarships & Internships" />
-    <meta property="og:description" content="Browse 150+ manually verified, fully funded scholarships and internships across 40+ countries. Real deadlines, real funding, no fake listings — updated weekly." />
+    <meta property="og:description" content="Curated, manually verified fully funded scholarships and internships for students who want to study and work abroad. Real deadlines, real funding, no fake listings." />
     <meta property="og:url" content="https://fullyfundedhub.com/" />
     <meta property="og:image" content="https://fullyfundedhub.com/logo.jpg" />
     <meta name="twitter:card" content="summary_large_image" />
     <meta name="twitter:title" content="FullyFundedHub — Verified Scholarships & Internships" />
-    <meta name="twitter:description" content="Browse 150+ manually verified, fully funded scholarships and internships across 40+ countries. Real deadlines, real funding, no fake listings — updated weekly." />
+    <meta name="twitter:description" content="Curated, manually verified fully funded scholarships and internships for students who want to study and work abroad. Real deadlines, real funding, no fake listings." />
     <meta name="twitter:image" content="https://fullyfundedhub.com/logo.jpg" />
+
+    <!--
+      Sitewide structured data (Organization + WebSite w/ SearchAction).
+      Placed directly in the static HTML — rather than injected by React —
+      so it's present even for tools that don't execute JavaScript (most
+      social-preview crawlers, some SEO auditing tools). Google itself reads
+      both, but this guarantees it's never missed.
+    -->
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "Organization",
+      "name": "FullyFundedHub",
+      "url": "https://fullyfundedhub.com/",
+      "logo": "https://fullyfundedhub.com/logo.jpg",
+      "sameAs": [
+        "https://www.instagram.com/fullyfundedhub01",
+        "https://whatsapp.com/channel/0029Vb8RJU01yT28RJJ6vF0L"
+      ]
+    }
+    </script>
+    <script type="application/ld+json">
+    {
+      "@context": "https://schema.org",
+      "@type": "WebSite",
+      "name": "FullyFundedHub",
+      "url": "https://fullyfundedhub.com/",
+      "potentialAction": {
+        "@type": "SearchAction",
+        "target": "https://fullyfundedhub.com/opportunities?q={search_term_string}",
+        "query-input": "required name=search_term_string"
+      }
+    }
+    </script>
   </head>
   <body>
     <div id="root"></div>

@@ -3,8 +3,7 @@ import { Toaster } from "@/components/ui/toaster"
 import { QueryClientProvider } from '@tanstack/react-query'
 import { queryClientInstance } from '@/lib/query-client'
 import { BrowserRouter as Router, Route, Routes, Navigate } from 'react-router-dom';
-import { AuthProvider, useAuth } from '@/lib/AuthContext';
-import UserNotRegisteredError from '@/components/UserNotRegisteredError';
+import { AuthProvider } from '@/lib/AuthContext';
 import ScrollToTop from './components/ScrollToTop';
 import Layout from '@/components/Layout';
 import ProtectedRoute from '@/components/ProtectedRoute';
@@ -44,23 +43,14 @@ const PageLoader = () => (
 );
 
 const AuthenticatedApp = () => {
-  const { isLoadingAuth, isLoadingPublicSettings, authError, navigateToLogin } = useAuth();
-
-  // Show loading spinner while checking app public settings or auth
-  if (isLoadingPublicSettings || isLoadingAuth) {
-    return <PageLoader />;
-  }
-
-  // Handle authentication errors
-  if (authError) {
-    if (authError.type === 'user_not_registered') {
-      return <UserNotRegisteredError />;
-    } else if (authError.type === 'auth_required') {
-      // Redirect to login automatically
-      navigateToLogin();
-      return null;
-    }
-  }
+  // NOTE: previously this component blocked *every* route (including the public
+  // homepage, opportunity listings, blog, etc.) behind a full-screen spinner
+  // until the Supabase session check resolved. That meant search engine
+  // crawlers and every first-time visitor saw a blank spinner before any
+  // content rendered. Public pages don't need auth at all, so we no longer
+  // gate them here — `ProtectedRoute` (used only for /dashboard) already
+  // handles its own auth-loading state for the one route that actually
+  // requires a logged-in user.
 
   // Render the main app
   return (

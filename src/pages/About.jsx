@@ -108,7 +108,7 @@ export default function About() {
       <section className="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8 py-20 text-center">
         <Reveal>
           <h2 className="font-heading text-3xl sm:text-4xl font-bold">Ready to find your next opportunity?</h2>
-          <p className="text-muted-foreground mt-3">Browse hundreds of verified, fully funded scholarships and internships.</p>
+          <p className="text-muted-foreground mt-3">Browse our full list of verified, fully funded scholarships and internships.</p>
           <Link to="/opportunities" className="mt-8 inline-flex items-center gap-2 px-6 py-3 bg-primary text-primary-foreground rounded-xl text-sm font-semibold hover:bg-primary/90 transition-all shadow-lg shadow-primary/25">
             Explore opportunities <ArrowRight className="w-4 h-4" />
           </Link>

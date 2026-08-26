@@ -50,6 +50,12 @@ export default function Home() {
   const [newsletterSent, setNewsletterSent] = useState(false);
   const [newsletterLoading, setNewsletterLoading] = useState(false);
   const [newsletterError, setNewsletterError] = useState('');
+  // Real, live counts instead of hardcoded marketing numbers — these used to
+  // say "150+ opportunities / 40+ countries" no matter what was actually
+  // published, which didn't match the real catalog. Defaulting to null
+  // hides the stat (rather than flashing a wrong number) until it loads.
+  const [oppCount, setOppCount] = useState(null);
+  const [countryCount, setCountryCount] = useState(null);
   const navigate = useNavigate();
 
   useEffect(() => {
@@ -76,7 +82,25 @@ export default function Home() {
       setLoading(false);
     };
 
+    const loadStats = async () => {
+      const { count } = await supabase
+        .from('opportunities')
+        .select('*', { count: 'exact', head: true })
+        .eq('status', 'published');
+      if (typeof count === 'number') setOppCount(count);
+
+      const { data: countryRows } = await supabase
+        .from('opportunities')
+        .select('country')
+        .eq('status', 'published')
+        .not('country', 'is', null);
+      if (countryRows) {
+        setCountryCount(new Set(countryRows.map((r) => r.country)).size);
+      }
+    };
+
     loadFeatured().catch(() => setLoading(false));
+    loadStats().catch(() => {});
   }, []);
 
   const handleSearch = (e) => {
@@ -103,8 +127,8 @@ export default function Home() {
   };
 
   const stats = [
-    { value: '150+', label: 'Verified opportunities' },
-    { value: '40+', label: 'Countries covered' },
+    { value: oppCount !== null ? `${oppCount}` : '—', label: 'Verified opportunities' },
+    { value: countryCount !== null ? `${countryCount}` : '—', label: 'Countries covered' },
     { value: 'Weekly', label: 'Updated regularly' },
     { value: '100%', label: 'Free to browse' },
   ];
@@ -117,7 +141,7 @@ export default function Home() {
 
   return (
     <div className="overflow-hidden">
-      <SEO title="FullyFundedHub — Verified Scholarships & Internships Worldwide" description="Browse 150+ manually verified, fully funded scholarships and internships across 40+ countries. Real deadlines, real funding, no fake listings — updated weekly." />
+      <SEO title="FullyFundedHub — Verified Scholarships & Internships Worldwide" description="Browse manually verified, fully funded scholarships and internships worldwide. Real deadlines, real funding, no fake listings — updated regularly." />
 
       {/* Hero */}
       <section className="relative min-h-[88vh] flex items-center justify-center px-4">

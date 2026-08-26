@@ -61,6 +61,7 @@ export default function OpportunityDetail() {
   if (!opp) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-20 text-center">
+        <SEO title="Opportunity Not Found — FullyFundedHub" description="This opportunity doesn't exist or is no longer available." noindex />
         <p className="text-muted-foreground">Opportunity not found.</p>
         <Link to="/opportunities" className="mt-4 inline-block text-primary hover:underline">← Back to all opportunities</Link>
       </div>
@@ -70,10 +71,49 @@ export default function OpportunityDetail() {
   const flagUrl = opp.country_code ? `https://flagcdn.com/w80/${opp.country_code.toLowerCase()}.png` : null;
   const deadlineStatus = getDeadlineStatus(opp.deadline);
   const daysLeft = getDaysUntil(opp.deadline);
+  const pageUrl = typeof window !== 'undefined' ? window.location.href : `https://fullyfundedhub.com/opportunities/${opp.id}`;
+
+  // No official schema.org type exists for "scholarship." For internships, JobPosting is
+  // the correct, Google-supported type. For scholarships, we stick to BreadcrumbList only
+  // rather than force a mismatched type that could trigger structured-data errors.
+  const jobPostingJsonLd = opp.opportunity_type === 'Internship' ? {
+    '@type': 'JobPosting',
+    title: opp.title,
+    description: opp.description || `${opp.opportunity_type} at ${opp.organization || 'various organizations'} in ${opp.country || 'multiple countries'}. ${opp.funding_type} funding available.`,
+    datePosted: opp.created_at || undefined,
+    validThrough: opp.deadline ? new Date(opp.deadline).toISOString() : undefined,
+    employmentType: 'INTERN',
+    hiringOrganization: {
+      '@type': 'Organization',
+      name: opp.organization || 'FullyFundedHub',
+    },
+    jobLocation: opp.country ? {
+      '@type': 'Place',
+      address: { '@type': 'PostalAddress', addressCountry: opp.country },
+    } : undefined,
+    baseSalary: opp.funding_amount ? {
+      '@type': 'MonetaryAmount',
+      name: opp.funding_amount,
+    } : undefined,
+    directApply: false,
+  } : null;
+
+  const breadcrumbJsonLd = {
+    '@type': 'BreadcrumbList',
+    itemListElement: [
+      { '@type': 'ListItem', position: 1, name: 'Home', item: 'https://fullyfundedhub.com/' },
+      { '@type': 'ListItem', position: 2, name: 'Opportunities', item: 'https://fullyfundedhub.com/opportunities' },
+      { '@type': 'ListItem', position: 3, name: opp.title, item: pageUrl },
+    ],
+  };
+
+  const jsonLd = jobPostingJsonLd
+    ? { '@context': 'https://schema.org', '@graph': [jobPostingJsonLd, breadcrumbJsonLd] }
+    : { '@context': 'https://schema.org', ...breadcrumbJsonLd };
 
   return (
     <div>
-      <SEO title={`${opp.title} — FullyFundedHub`} description={opp.description || `${opp.opportunity_type} at ${opp.organization || 'various organizations'} in ${opp.country || 'multiple countries'}. ${opp.funding_type} funding available.`} />
+      <SEO title={`${opp.title} — FullyFundedHub`} description={opp.description || `${opp.opportunity_type} at ${opp.organization || 'various organizations'} in ${opp.country || 'multiple countries'}. ${opp.funding_type} funding available.`} jsonLd={jsonLd} />
 
       {showAuthPrompt && (
         <div className="fixed inset-0 z-50 flex items-center justify-center bg-black/70 backdrop-blur-sm p-4 animate-fade-in" onClick={() => setShowAuthPrompt(false)}>
