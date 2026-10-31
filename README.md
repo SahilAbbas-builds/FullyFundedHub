@@ -1,77 +1,41 @@
-# Base44 Project
+<div align="center">
+  <h1>🚀 FullyFundedHub</h1>
+  <p><strong>International Scholarship Portal & Modern Full-Stack Web Application</strong></p>
 
-Use this repository to run and edit the app locally, then publish changes back through Base44.
+  <a href="https://fullyfundedhub.com"><strong>🌐 Live Demo: fullyfundedhub.com</strong></a><br/><br/>
 
-Any change pushed to the repo will also be reflected in the Base44 Builder.
+  <img src="https://img.shields.io/badge/Node.js-339933?style=for-the-badge&logo=nodedotjs&logoColor=white" alt="Node.js" />
+  <img src="https://img.shields.io/badge/Vite-646CFF?style=for-the-badge&logo=vite&logoColor=white" alt="Vite" />
+  <img src="https://img.shields.io/badge/JavaScript-F7DF1E?style=for-the-badge&logo=javascript&logoColor=black" alt="JavaScript" />
+</div>
 
-## Prerequisites
+<br/>
 
-1. Clone the repository using the project's Git URL.
-2. Navigate to the project directory.
-3. Install dependencies: `npm install`.
-4. Install the Base44 CLI: `npm install -g base44@latest`.
+This repository contains the source code for **FullyFundedHub**, a responsive, high-performance online portal detailing international undergraduate, master's, and doctoral scholarship opportunities globally.
 
-See the [Base44 CLI docs](https://docs.base44.com/developers/references/cli/get-started/overview) if you want to run Base44 commands directly.
+## 📸 Previews
 
-## Run Locally
+<img width="942" height="418" alt="Screenshot 2026-10-31 135943" src="https://github.com/user-attachments/assets/ebb45198-5ec1-4581-8716-30b9bc72a4c4" />
 
-Run the full local development environment from the project root:
 
+---
+
+## 🚀 Features
+
+*   **Global Opportunity Portal:** A centralized platform for students to find and track fully funded international scholarships.
+*   **Modern Frontend:** Blazing fast development server and optimized build processes powered by Vite.
+*   **API Integration:** Configurable environment variables for easy switching between local development and production backend environments.
+*   **Seamless Deployment:** Fully deployed and operational in production.
+
+## 🛠️ Tech Stack
+
+*   **Frontend:** Vite, HTML, CSS, JavaScript
+*   **Backend / API:** Node.js 
+*   **Package Manager:** npm
+
+## 🚀 Installation
+
+1. Clone the repository:
 ```bash
-base44 dev
-```
-
-`base44 dev` starts the local Base44 development backend and, when this app is configured for it, also starts the frontend dev server for you. Use the frontend URL printed by the command.
-
-For example, when the Base44 project config includes a `serveCommand`, `base44 dev` can launch the frontend too:
-
-```json5
-{
-  "site": {
-    "serveCommand": "npm run dev"
-  }
-}
-```
-
-In a Base44 project this lives in `base44/config.jsonc`.
-
-## Run Only The Frontend
-
-If you only want to work on the frontend against the hosted Base44 backend, run:
-
-```bash
-npm run dev
-```
-
-Open the local URL printed by Vite.
-
-## Use The Hosted Backend
-
-For frontend-only development, create or update `.env.local` in the project root:
-
-```bash
-VITE_BASE44_APP_ID=your_app_id
-VITE_BASE44_APP_BASE_URL=https://your-app.base44.app
-```
-
-`VITE_BASE44_APP_ID` identifies the Base44 app.
-
-`VITE_BASE44_APP_BASE_URL` tells the Base44 Vite plugin where to send local `/api` requests. Point it at your deployed Base44 app URL when you want the local frontend to use the hosted backend.
-
-When you use `base44 dev`, the command injects the local Base44 values for you, so `.env.local` is mainly needed for frontend-only workflows.
-
-## Publish Your Changes
-
-After pushing your changes to git, open the Base44 dashboard and publish the app:
-
-```bash
-base44 dashboard open
-```
-
-## Docs & Support
-
-Documentation: [https://docs.base44.com/Integrations/Using-GitHub](https://docs.base44.com/Integrations/Using-GitHub)
-
-Base44 CLI command reference: [https://docs.base44.com/developers/references/cli/commands/introduction](https://docs.base44.com/developers/references/cli/commands/introduction)
-
-Support: [https://app.base44.com/support](https://app.base44.com/support)
+git clone [https://github.com/SahilAbbas-builds/FullyFundedHub.git](https://github.com/SahilAbbas-builds/FullyFundedHub.git)
+cd FullyFundedHub
